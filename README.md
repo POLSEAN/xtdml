@@ -21,7 +21,7 @@ where
 > Previous versions of the package allowed for models with endogenous treatment variables. This has been temporally removed from the current package, but we are currently working on including IV estimation and weak IV tests in the current version of the `XTDML` package.
 
 > [!WARNING]
-> The current version of the package allows the user to immediately use the estimation tools *without the need* to proceed with additional data managing and transformations, unlike before.
+> The current version of the package allows the user to immediately use the estimation tools *without the need to* proceed with additional data managing and transformations.
 > In particular, the user can choose:
 >
 >  1. The panel data approach to use among `approach = ("fd-exact", "wg-approx", "cre")`; default is `"fd-exact"`. `XTDML` proceeds with transforming the data based on the selected approach, following Clarke and Polselli (2025).
