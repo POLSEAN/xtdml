@@ -334,13 +334,10 @@ set_default_measure = function(measure_in = NA, task_type) {
   return(measure)
 }
 
-
-format.perc = function(probs, digits) {
-  paste(
-    format(100 * probs, trim = TRUE, scientific = FALSE, digits = digits),
-    "%")
+#' @export
+format.perc <- function(x, digits = 3, ...) {
+  paste0(formatC(100 * x, format = "f", digits = digits), "%")
 }
-
 
 # Take x (vector or matrix) as input and return it as a matrix
 assure_matrix = function(x) {
@@ -434,35 +431,25 @@ check_smpl_split = function(smpl, n_obs, check_intersect = FALSE) {
   return(TRUE)
 }
 
-# # Within-group (WG) transformation for fixed effects
-# wg_transformation = function (x, idx){
-#
-#   data = data_frame(x, "id" = idx)
-#   x_transf = demean(data, select = "x", group = "id", add_attributes = FALSE,
-#                     verbose = FALSE)
-#   x_m = mean(data$x)
-#   x_wg = x_transf[2] + x_m
-#   xx = as.numeric(unlist(x_wg))
-#   return(xx)
-# }
-#
-# # First-difference (FD) transformation for fixed effects
-# fd_transformation = function (x, idx){
-#
-#   data = data_frame(x, "id" = idx)
-#
-#   df.fd = data %>%
-#     group_by(id) %>%
-#     mutate(across(starts_with("x"), ~ c(NA, diff(.x))))  %>%
-#     ungroup()
-#
-#   df.fd <- select(df.fd, -id)
-#
-#   xx = as.numeric(unlist(df.fd))
-#   return(xx)
-# }
-
 # remove NA from summation within outer()
 sum_na <- function(x) if(all(is.na(x))) NA else sum(x, na.rm = TRUE)
 
 
+## Polynomial expansion (for Lasso with extensive dictionary)
+polyexp = function(df){
+  df.polyexp = df
+  colnames = colnames(df)
+  for (i in 1:ncol(df)){
+    for (j in i:ncol(df)){
+
+      colnames = c(colnames, paste0(names(df)[i],'.',names(df)[j]))
+      df.polyexp = cbind(df.polyexp, df[,i]*df[,j])
+    }
+    colnames = c(colnames,paste0(names(df)[i],'.',names(df)[i],'.',names(df)[i]))
+    df.polyexp = cbind(df.polyexp, df[,i]*df[,i]*df[,i])
+
+  }
+
+  names(df.polyexp) = colnames
+  return(df.polyexp)
+}

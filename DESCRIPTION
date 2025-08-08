@@ -1,21 +1,23 @@
 Package: XTDML
 Type: Package
 Title: Double Machine Learning for Static Panel Models with Fixed Effects
-Version: 0.1.3
-Last Update: December 2023
-Authors@R: c(
-    person("Paul", "Clarke", email = "pclarke@essex.ac.uk", role = "aut"),
-    person("Annalivia", "Polselli", email = "annalivia.polselli@essex.ac.uk", role = c("aut", "cre")))
-Author: Paul Clarke [aut],
-        Annalivia Polselli [aut, cre]
-Maintainer: Annalivia Polselli <annalivia.polselli@essex.ac.uk>
-Description: Estimation of the causal parameter using double machine learning (Chernozhukov et al., 2018) with partially linear regression models (Robinson, 1988) in the context of panel data with fixed effects. 'XTDML' allows the estimation of the nuisance functions in the model by machine learning methods and computation  of the Neyman orthogonal score functions. 'XTDML' is based on the CRAN package `DoubleML' that is an object-oriented implementation using the 'mlr3' ecosystem and the 'R6' package. 'XTDML' is built following 'DoubleML' by Chernozhukov et al. (2018). 
-License: MIT + file LICENSE
+Version: 0.1.4
+Authors@R:
+    person("Annalivia", "Polselli", email = "apolselli.econ@gmail.com", role = c("aut", "cre"))
+Author: Annalivia Polselli [aut, cre],
+Maintainer: Annalivia Polselli <apolselli.econ@gmail.com>
+Description: `XTDML` is used to estimate the structural parameter (treatment effect) in partially linear regression models with panel data under the fixed effect assumption using double machine learning (Clarke and Polselli, 2025). `XTDML` is built on the CRAN package `DoubleML` (Bach et al., 2024) which is an object-oriented implementation using the 'mlr3' ecosystem and the 'R6' package. `XTDML` follows the notation in `DoubleML`.
+License: GPL-2 | GPL-3 
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
-Imports: R6 (>= 2.4.1), data.table (>= 1.12.8), stats, checkmate, mlr3
+Imports: R6 (>= 2.4.1), data.table (>= 1.12.8), checkmate, mlr3
         (>= 0.5.0), mlr3tuning (>= 0.3.0), mvtnorm, utils,
         clusterGeneration, readstata13, mlr3learners (>= 0.3.0),
-        mlr3misc
+        mlr3misc, magrittr, dplyr, stats, rpart, MLmetrics
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+LazyData: true

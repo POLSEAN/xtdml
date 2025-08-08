@@ -12,5 +12,8 @@
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom clusterGeneration genPositiveDefMat
 #' @importFrom utils read.table compareVersion packageVersion
+#' @importFrom stats complete.cases
+#' @importFrom magrittr %>%
+#' @importFrom dplyr mutate group_by across all_of ungroup select summarise everything
 #' @importFrom MLmetrics RMSE
 NULL
