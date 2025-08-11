@@ -17,16 +17,19 @@ where
   * ($\alpha_i, \gamma_i$) are the unobserved individual heterogeneity correlated with the included covariates;
   * ($U_{it}$, $V_{it}$) are disturbances.
 
-> [!WARNING]
-> Previous versions of the package allowed for models with endogenous treatment variables. This has been temporally removed from the current package, but we are currently working on including IV estimation and weak IV tests in the current version of the `XTDML` package.
-
-> [!WARNING]
+> [!NOTE]
 > The current version of the package allows the user to immediately use the estimation tools *without the need to* proceed with additional data managing and transformations.
 > In particular, the user can choose:
 >
 >  1. The panel data approach to use among `approach = ("fd-exact", "wg-approx", "cre")`; default is `"fd-exact"`. `XTDML` proceeds with transforming the data based on the selected approach, following Clarke and Polselli (2025).
 >
 > 2. The type of transformation to apply to the covariates $X$ in the data set among `transformX = ("no", "minmax", "poly")`. `"no"` does not transform the covariates `X` and is recommended for tree-based learners. `"minmax"` applies the Min-Max normalization  $x' = (x-x_{min})/(x_{max}-x_{min})$ to the covariates and is recommended with neural networks. `"poly"` add polynomials up to order three and interactions between all possible combinations of two and three variables; this is recommended for Lasso. Default is `"no"`.
+
+
+> [!CAUTION]
+> 1. Previous versions of the package allowed for **treatment endogeneity** in the partially linear panel regression model. This option has been temporally removed, but we are currently working on including IV estimation and weak IV tests in the current version of the `XTDML` package.
+> 
+> 2. With the current version of the package it is **no longer possible** to choose the *hybrid* approach; this is consistent with the published version of the article.
 
 ## Installing the package from GitHub
 The current version can be installed via devtools:
