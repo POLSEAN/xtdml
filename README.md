@@ -1,9 +1,9 @@
 # XTDML
-The `XTDML` package implements double machine learning (DML) for static partially linear panel regression (PLPR) models with fixed effects, as in [Clarke and Polselli (2025)](https://academic.oup.com/ectj/advance-article/doi/10.1093/ectj/utaf011/8120202?login=false). 
-The `XTDML` package is built on the `DoubleML` package by Bach et al. (2022) using the `mlr3` ecosystem and the same notation.
+The `xtdml` package implements double machine learning (DML) for static partially linear regression models for panel data with fixed effects, as in [Clarke and Polselli (2025)](https://academic.oup.com/ectj/advance-article/doi/10.1093/ectj/utaf011/8120202?login=false). 
+The `xtdml` package is built on the `DoubleML` package by Bach et al. (2022) using the `mlr3` ecosystem and the same notation.
 
 ## The Partially Linear Panel Regression Model
-The `XTDML` package estimates the structural (causal) parameter from panel data models: 
+The `xtdml` package estimates the structural (causal) parameter from panel data models: 
 ```math
   Y_{it} = \theta_0 D_{it} + g_0(X_{it}) + \alpha_i + U_{it}
 ```
@@ -21,30 +21,26 @@ where
 > The current version of the package allows the user to immediately use the estimation tools *without the need to* proceed with additional data managing and transformations.
 > In particular, the user can choose:
 >
->  1. The panel data approach to use among `approach = ("fd-exact", "wg-approx", "cre")`; default is `"fd-exact"`. `XTDML` proceeds with transforming the data based on the selected approach, following Clarke and Polselli (2025).
+>  1. The panel data approach to use among `approach = ("fd-exact", "wg-approx", "cre")`; default is `"fd-exact"`. `xtdml` proceeds with transforming the data based on the selected approach, following Clarke and Polselli (2025).
 >
 > 2. The type of transformation to apply to the covariates $X$ in the data set among `transformX = ("no", "minmax", "poly")`. `"no"` does not transform the covariates `X` and is recommended for tree-based learners. `"minmax"` applies the Min-Max normalization  $x' = (x-x_{min})/(x_{max}-x_{min})$ to the covariates and is recommended with neural networks. `"poly"` add polynomials up to order three and interactions between all possible combinations of two and three variables; this is recommended for Lasso. Default is `"no"`.
 
 
 > [!CAUTION]
-> 1. Previous versions of the package allowed for **treatment endogeneity** in the partially linear panel regression model. This option has been temporally removed, but we are currently working on including IV estimation and weak IV tests in the current version of the `XTDML` package.
+> 1. The package has been renamed `xtdml` from `XTDML`!
 > 
-> 2. With the current version of the package it is **no longer possible** to choose the *hybrid* approach; this is consistent with the published version of the article.
+> 2. Previous versions of the package allowed for **treatment endogeneity** in the partially linear panel regression model. This option has been *temporally removed*, but we are currently working on including IV estimation and weak IV tests in the current version of the `xtdml` package. (Panel IV DML *coming soon*)
+> 
+> 3. With the current version of the package it is **no longer possible** to choose the **hybrid approach**; this is consistent with the published version of the article.
+>    
+> 4. Vignettes will be added soon.
+
 
 ## Installing the package from GitHub
 The current version can be installed via devtools:
 ```
 library(devtools)
-install_github("POLSEAN/XTDML")
-```
-
-## Loading the package and displaying the vignette (with sample codes)
-```
-library(XTDML)
-
-# To display compiled examples
-vignette("XTDML")
-browseVignettes("XTDML") 
+install_github("POLSEAN/xtdml")
 ```
 
 ## References
@@ -52,7 +48,5 @@ Bach, P., Chernozhukov, V., Kurz, M. S., Spindler, M. and Klaassen, S. (2024), D
 
 Chernozhukov, V., Chetverikov, D., Demirer, M., Duflo, E., Hansen, C., Newey, W., and Robins, J. (2018). Double/debiased machine learning for treatment and structural parameters. *The Econometrics Journal*, 21(1):C1–C68.
 
-Clarke, P. S. and Polselli,  A. (2025). Double Machine Learning for Static Panel Models with Fixed Effects. Econometrics Journal. DOI: 10.1093/ectj/utaf011.
-
-
+Clarke, P. S. and Polselli,  A. (2025). Double Machine Learning for Static Panel Models with Fixed Effects. *The Econometrics Journal*. DOI: 10.1093/ectj/utaf011.
 
