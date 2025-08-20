@@ -1,26 +1,26 @@
-#' @title Abstract class XTDML
+#' @title Abstract class xtdml
 #'
 #' @description
 #' Abstract base class that cannot be initialized.
 #'
-#' `XTDML` is used to estimate the structural parameter (treatment effect)
+#' `xtdml` is used to estimate the structural parameter (treatment effect)
 #'  in partially linear regression models with panel data under the fixed effect
 #'  assumption using double machine learning  (Clarke and Polselli, 2025).
-#'  `XTDML` allows the estimation of the nuisance functions in the model by machine
+#'  `xtdml` allows the estimation of the nuisance functions in the model by machine
 #'  learning methods based on the panel data approach chosen by the user,
 #'  and computation of the Neyman-orthogonal score functions.
 #'
-#' `XTDML` is built on `DoubleML` (Bach et al., 2024) which is an object-oriented implementation using
-#' the 'mlr3' ecosystem and the 'R6' package. `XTDML` follows the notation in `DoubleML`.
+#' `xtdml` is built on `DoubleML` (Bach et al., 2024) which is an object-oriented implementation using
+#' the 'mlr3' ecosystem and the 'R6' package. `xtdml` follows the notation in `DoubleML`.
 #'
 #' @importFrom R6 R6Class
 #'
 #' @format [R6::R6Class] object.
 #'
-#' @family XTDML
+#' @family xtdml
 #'
 #' @export
-XTDML = R6Class("XTDML",
+xtdml <- R6Class("xtdml",
   active = list(
     #' @field all_coef_theta (`matrix()`) \cr
     #' Estimates of the causal parameter(s) `"theta"` for the `n_rep` different sample
@@ -350,7 +350,7 @@ XTDML = R6Class("XTDML",
     #' @description
     #' DML with FE is an abstract class that can't be initialized.
     initialize = function() {
-      stop("XTDML is an abstract class that can't be initialized.")
+      stop("xtdml is an abstract class that can't be initialized.")
     },
 
     #' @description
@@ -375,7 +375,6 @@ XTDML = R6Class("XTDML",
         "Treatment variable: ", paste0(self$data$d_cols, collapse = ", "),
         "\n",
         "Covariates: ", paste0(cbind(self$data$x_cols), collapse = ", "), "\n",
-        #"Instrument(s): ", paste0(self$data$z_cols, collapse = ", "), "\n",
         cluster_info,
         "No. Observations: ", self$data$n_obs, "\n",
         "No. Groups: ", length(unique(self$data$data_model[[self$data$cluster_cols]])), "\n")
@@ -891,7 +890,7 @@ XTDML = R6Class("XTDML",
     },
 
     #' @description
-    #' Get hyper-parameters for the nuisance model of XTDML models.
+    #' Get hyper-parameters for the nuisance model of xtdml models.
     #'
     #' @param learner (`character(1)`) \cr
     #' The nuisance model/learner (see method `params_names()`)
@@ -1248,8 +1247,6 @@ XTDML = R6Class("XTDML",
         }else{
           private$rmses_[[learner]][private$i_rep,
                                     private$i_treat] = MLmetrics::RMSE(preds[[learner]],targets[[learner]])
-          #print(paste0("RMSE(targets[[learner]]) ", learner,  " : " ,  targets[[learner]]))
-
         }
       }
     },
@@ -1366,7 +1363,7 @@ XTDML = R6Class("XTDML",
       dml_procedure = self$dml_procedure
       # dml_approach  = self$dml_approach
       # dml_type      = self$dml_type
-      # XTDML = self$XTDML
+      # xtdml = self$xtdml
 
       psi_theta_a = private$get__psi_theta_a()
       psi_theta_b = private$get__psi_theta_b()
@@ -1390,18 +1387,12 @@ XTDML = R6Class("XTDML",
           scaling_factor = 1 / prod(xx)
           thetas[i_fold] = -(scaling_factor * sum(psi_theta_b[test_index])) /
             (scaling_factor * sum(psi_theta_a[test_index]))
-          #print(paste0("thetas in fold ", i_fold, " : ", thetas[i_fold]))
-
           rmses[i_fold] = sqrt(scaling_factor * sum((res_y[test_index] - res_d[test_index] * thetas[i_fold])^2))
-          #print(paste0("rmses in fold ", i_fold, " : ", rmses[i_fold]))
         }
         theta = mean(thetas, na.rm = TRUE)
         private$all_dml1_coef_theta_[private$i_treat, private$i_rep, ] = thetas
         model_rmse = mean(rmses, na.rm = TRUE)
         private$model_rmse_ = model_rmse
-
-        #print(paste0("theta in dml1: ", theta))
-        #print(paste0("rmse in dml1: ", model_rmse))
 
       } else if (dml_procedure == "dml2") {
         # See Chiang et al. (2021) Algorithm 1
@@ -1432,15 +1423,10 @@ XTDML = R6Class("XTDML",
 
           theta_subsample_mean =  - psi_theta_b_subsample_mean / psi_theta_a_subsample_mean
           rmses_subsample_mean =  sqrt(scaling_factor * sum((res_y[test_index] - res_d[test_index] * theta_subsample_mean)^2))
-          #print(paste0("rmses in fold ", i_fold, " : ", rmses_subsample_mean))
-          #print(paste0("theta_subsample_mean in fold ", i_fold, ": ", theta_subsample_mean))
 
         }
         theta = -psi_theta_b_subsample_mean / psi_theta_a_subsample_mean
         model_rmse = rmses_subsample_mean
-
-        #print(paste0("theta in dml2: ", theta))
-        #print(paste0("rmse in dml2: ", model_rmse))
 
         private$model_rmse_ = model_rmse
       }

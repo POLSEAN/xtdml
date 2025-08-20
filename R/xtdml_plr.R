@@ -3,21 +3,22 @@
 #' @description
 #' Routine to estimate partially linear panel regression models with fixed effects within double machine learning.
 #'
-#' @format [R6::R6Class] object inheriting from [XTDML].
+#' @format [R6::R6Class] object inheriting from [xtdml].
 #'
-#' @family XTDML
+#' @family xtdml
 #' @details
 #' Consider partially linear panel regression (PLR) model of form
 #'
 #' \eqn{ Y_{it} = \theta_0 D_{it} + g_0(x_{it}) + \alpha_i + U_{it} (1)}
 #'
-#' \eqn{ D_{it} = m_0(x_{it}) + \gamma_i + \V_{it}  (2)}
+#' \eqn{ D_{it} = m_0(x_{it}) + \gamma_i + V_{it}  (2)}
 #'
 #' where (1) is the outcome equation and (2) is the treatment equation.
 #'
 #' @usage NULL
 #'
 #' @examples
+#' \dontrun{
 #' # An illustrative example using a regression tree (`rpart`)
 #' library(mlr3)
 #'
@@ -32,22 +33,19 @@
 #'                 cluster_cols = "id", approach = "fd-exact")
 #'
 #' # Set up DML estimation environment
-#' if (requireNamespace("rpart", quietly = TRUE)) {
-#'   learner = mlr3::lrn("regr.rpart")
+#'   learner = lrn("regr.rpart")
 #'   ml_l = learner$clone()
 #'   ml_m = learner$clone()
 #'
-#'   ob_xtdml = xtdml_plr$new(obj_xtdml_data,
+#'   obj_xtdml = xtdml_plr$new(obj_xtdml_data,
 #'                            ml_l = ml_l, ml_m = ml_m,
 #'                            score = "orth-PO", n_folds = 3)
-#'   ob_xtdml$fit()
-#' } else {
-#'   message("Package 'rpart' not installed, skipping example")
+#'   obj_xtdml$fit()
 #' }
 #'
 #' @export
-xtdml_plr = R6Class("xtdml_plr",
-   inherit = XTDML, public = list(
+xtdml_plr <- R6Class("xtdml_plr",
+   inherit = xtdml, public = list(
     #' @description
     #' Creates a new instance of this R6 class.
     #'
@@ -154,7 +152,6 @@ xtdml_plr = R6Class("xtdml_plr",
         draw_sample_splitting,
         apply_cross_fitting)
 
-      private$check_data(self$data)
       private$check_score(self$score)
       ml_l = private$assert_learner(ml_l, "ml_l", Regr = TRUE, Classif = FALSE)
       ml_m = private$assert_learner(ml_m, "ml_m", Regr = TRUE, Classif = TRUE)
@@ -281,6 +278,29 @@ xtdml_plr = R6Class("xtdml_plr",
     #' @param tune_on_folds (`logical(1)`) \cr
     #' Indicates whether the tuning should be done fold-specific or globally.
     #' Default is `FALSE`.
+    #'
+    #' @examples
+    #' \dontrun{
+    #' # Tuning example with `rpart`
+    #'
+    #' # Set up a list of parameter grids
+    #' param_grid = list("ml_l" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
+    #'                             maxdepth = p_int(lower = 2, upper = 10)),
+    #'                   "ml_m" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
+    #'                             maxdepth = p_int(lower = 2, upper = 10)))
+    #'
+    #' tune_settings = list(n_folds_tune = 3,
+    #'                    rsmp_tune = mlr3::rsmp("cv", folds = 3),
+    #'                    terminator = mlr3tuning::trm("evals", n_evals = 10),
+    #'                    algorithm = tnr("grid_search"), resolution = 20)
+    #'
+    #' xtdml_rpart$tune(param_set = param_grid, tune_settings = tune_settings)
+    #'
+    #' # Estimate target/causal parameter
+    #' xtdml_rpart$fit()
+    #' xtdml_rpart$print()
+    #'
+    #' }
     #'
     #' @return self
     tune = function(param_set, tune_settings = list(
@@ -565,16 +585,6 @@ xtdml_plr = R6Class("xtdml_plr",
       if (is.character(score)) {
         valid_score = c("orth-PO", "orth-IV")
         assertChoice(score, valid_score)
-      }
-      return()
-    },
-    check_data = function(obj_dml_data) {
-      if (!is.null(obj_dml_data$z_cols)) {
-        stop(paste(
-          "Incompatible data.\n", paste(obj_dml_data$z_cols, collapse = ", "),
-          "has been set as instrumental variable(s).\n",
-          "The function to fit a partially linear panel regression model with IV",
-          "is under development..."))
       }
       return()
     }

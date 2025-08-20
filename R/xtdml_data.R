@@ -68,23 +68,12 @@ xtdml_data = R6Class("xtdml_data",
 
                                 #' @field data_model ([`data.table`][data.table::data.table()])\cr
                                 #' Internal data object that implements the causal panel model as specified by
-                                #' the user via `y_col`, `d_cols`, `x_cols`, `dbar_col`,
-                                #' and  (in later implementations) `z_cols`.
+                                #' the user via `y_col`, `d_cols`, `x_cols`, `dbar_col`.
                                 data_model = function(value) {
                                   if (missing(value)) {
                                     return(private$data_model_)
                                   } else {
                                     stop("can't set field data_model")
-                                  }
-                                },
-
-                                #' @field n_instr (`NULL`, `integer(1)`) \cr
-                                #' The number of instruments (in later implementations).
-                                n_instr = function(value) {
-                                  if (missing(value)) {
-                                    return(length(self$z_cols))
-                                  } else {
-                                    stop("can't set field n_instr")
                                   }
                                 },
 
@@ -152,26 +141,6 @@ xtdml_data = R6Class("xtdml_data",
                                     assert_character(y_col, len = 1)
                                     assert_subset(y_col, self$all_variables)
                                     private$y_col_ = y_col
-                                    if (reset_value) {
-                                      private$check_disjoint_sets()
-                                      self$set_data_model(self$d_cols[1])
-                                    }
-                                  }
-                                },
-
-                                #' @field z_cols (`NULL`, `character()`) \cr
-                                #' The instrumental variables (allowed in later implementations). Default is `NULL`.
-                                z_cols = function(value) {
-                                  if (missing(value)) {
-                                    return(private$z_cols_)
-                                  } else {
-                                    z_cols = value
-                                    reset_value = !is.null(self$data_model)
-                                    if (!is.null(z_cols)) {
-                                      assert_character(z_cols, unique = TRUE)
-                                    }
-                                    assert_subset(z_cols, self$all_variables)
-                                    private$z_cols_ = z_cols
                                     if (reset_value) {
                                       private$check_disjoint_sets()
                                       self$set_data_model(self$d_cols[1])
@@ -251,9 +220,6 @@ xtdml_data = R6Class("xtdml_data",
                                 #' Individual mean of the treatment variable
                                 #' (used for the CRE approach). Default is `NULL`.
                                 #'
-                                #' @param z_cols (`NULL`, `character()`) \cr
-                                #' The instrumental variables. Default is `NULL`.
-                                #'
                                 #' @param approach (`character(1)`) \cr
                                 #' A `character()` (`"fd-exact"`, `"wg-approx"` or `"cre"`)
                                 #' specifying the panel data technique to apply
@@ -275,7 +241,6 @@ xtdml_data = R6Class("xtdml_data",
                                                       x_cols = NULL,
                                                       y_col = NULL,
                                                       d_cols = NULL,
-                                                      z_cols = NULL,
                                                       dbar_col = NULL,
                                                       cluster_cols = NULL,
                                                       approach = NULL,
@@ -295,7 +260,6 @@ xtdml_data = R6Class("xtdml_data",
 
                                   self$y_col  = y_col
                                   self$d_cols = d_cols
-                                  self$z_cols = z_cols
                                   self$x_cols = x_cols
                                   self$dbar_col = dbar_col
                                   private$check_disjoint_sets()
@@ -312,14 +276,13 @@ xtdml_data = R6Class("xtdml_data",
                                 #' @description
                                 #' Print `xtdml_data` objects.
                                 print = function() {
-                                  header = "================= XTDML Object ==================\n"
+                                  header = "================= xtdml Object ==================\n"
                                   data_info = paste0(
                                     "Outcome variable: ", self$y_col, "\n",
                                     "Treatment variable(s): ", paste0(self$d_cols, collapse = ", "), "\n",
                                     "Cluster variable(s): ", paste0(self$cluster_cols, collapse = ", "),
                                     "\n",
                                     "Covariates: ", paste0(c(self$x_cols, self$dbar_col), collapse = ", "), "\n",
-                                    "Instrument(s): ", paste0(self$z_cols, collapse = ", "), "\n",
                                     "No. Observations: ", self$n_obs, "\n",
                                     "Panel data approach: ", private$approach_, "\n",
                                     "Type of transformation for X: ", private$transformX_, "\n")
@@ -333,7 +296,7 @@ xtdml_data = R6Class("xtdml_data",
 
                                 #' @description
                                 #' Setter function for `data_model`. The function implements the causal model
-                                #' as specified by the user via `y_col`, `d_cols`, `x_cols`, `z_cols` and
+                                #' as specified by the user via `y_col`, `d_cols`, `x_cols` and
                                 #' `cluster_cols` and assigns the role for the treatment variables in the
                                 #' multiple-treatment case.
                                 #' @param treatment_var (`character()`)\cr
@@ -353,7 +316,6 @@ xtdml_data = R6Class("xtdml_data",
                                     self$x_cols,
                                     self$y_col,
                                     self$treat_col,
-                                    self$z_cols,
                                     self$dbar_col,
                                     self$cluster_cols
                                   )
@@ -368,7 +330,6 @@ xtdml_data = R6Class("xtdml_data",
                                 x_cols_ = NULL,
                                 y_col_ = NULL,
                                 d_cols_ = NULL,
-                                z_cols_ = NULL,
                                 dbar_col_ = NULL,
                                 cluster_cols_ = NULL,
                                 treat_col_ = NULL,
@@ -421,31 +382,6 @@ xtdml_data = R6Class("xtdml_data",
                                       "At least one variable/column is set as covariate ('x_cols')",
                                       "and as a cluster variable ('cluster_cols')."))
                                   }
-                                  if (!is.null(self$z_cols)) {
-                                    z_cols = self$z_cols
-
-                                    if (y_col %in% z_cols) {
-                                      stop(paste(
-                                        y_col,
-                                        "cannot be set as outcome variable 'y_col' and",
-                                        "instrumental variable in 'z_cols'."))
-                                    }
-                                    if (any(z_cols %in% d_cols)) {
-                                      stop(paste(
-                                        "At least one variable/column is set as treatment",
-                                        "variable ('d_cols') and instrumental variable in 'z_cols'."))
-                                    }
-                                    if (any(z_cols %in% x_cols)) {
-                                      stop(paste(
-                                        "At least one variable/column is set as covariate ('x_cols')",
-                                        "and instrumental variable in 'z_cols'."))
-                                    }
-                                    if (any(z_cols %in% cluster_cols)) {
-                                      stop(paste(
-                                        "At least one variable/column is set as instrumental variable",
-                                        "('z_cols') and as a cluster variable ('cluster_cols')."))
-                                    }
-                                  }
                                 }
                               )
 )
@@ -468,9 +404,6 @@ xtdml_data = R6Class("xtdml_data",
 #' @param x_cols (`character()`) \cr
 #' The covariates.
 #'
-#' @param z_cols (`NULL`, `character()`) \cr
-#' The instrumental variables. Default is `NULL`.
-#'
 #' @param cluster_cols (`NULL`, `character()`) \cr
 #' The cluster variables. Default is `NULL`.
 #'
@@ -490,7 +423,9 @@ xtdml_data = R6Class("xtdml_data",
 #' @return Creates a new instance of class `xtdml_data`.
 #'
 #' @examples
-#' # Generate simulated dataset
+#'
+#' \dontrun{
+#' # Generate simulated panel dataset from `xtdml`
 #' data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
 #'
 #' # Set up DML data environment
@@ -503,12 +438,13 @@ xtdml_data = R6Class("xtdml_data",
 #'
 #' obj_xtdml_data$print()
 #'
+#' }
+#'
 #' @export
 #'
 xtdml_data_from_data_frame = function(df,
                                x_cols = NULL, y_col = NULL, d_cols = NULL,
-                               z_cols = NULL, cluster_cols = NULL,
-                               approach = NULL, transformX = NULL)
+                               cluster_cols = NULL, approach = NULL, transformX = NULL)
   {
   if (is.null(cluster_cols)) {
     stop(print("Specify at least one (`cluster_vars`)."))
@@ -566,7 +502,7 @@ xtdml_data_from_data_frame = function(df,
 
         cluster_id = cluster_cols[[1]]
 
-        df_no_idx = df %>% select(all_of(c(x_cols, y_col, d_cols, z_cols)))
+        df_no_idx = df %>% select(all_of(c(x_cols, y_col, d_cols)))
 
         df_gm = df_no_idx %>%
           summarise(across(everything(), mean, na.rm = TRUE))
@@ -574,10 +510,10 @@ xtdml_data_from_data_frame = function(df,
 
         df_mi = df %>%
           group_by(across(all_of(cluster_id))) %>%
-          mutate(across(all_of(c(x_cols, y_col, d_cols, z_cols)), ~ mean(.x, na.rm = TRUE), .names = "m.{col}")) %>%
+          mutate(across(all_of(c(x_cols, y_col, d_cols)), ~ mean(.x, na.rm = TRUE), .names = "m.{col}")) %>%
           ungroup()
 
-        var_names = c(x_cols, y_col, d_cols, z_cols)
+        var_names = c(x_cols, y_col, d_cols)
         df_dm = df_no_idx
 
         for (v in var_names) {
@@ -611,9 +547,9 @@ xtdml_data_from_data_frame = function(df,
 
       if (approach == "cre"){
         df_expanded[[dbar_col]] = df.transf[[dbar_col]]
-        protected_cols = c(y_col, d_cols, dbar_col, z_cols, cluster_cols)
+        protected_cols = c(y_col, d_cols, dbar_col, cluster_cols)
       } else{
-        protected_cols = c(y_col, d_cols,  z_cols, cluster_cols)
+        protected_cols = c(y_col, d_cols, cluster_cols)
       }
 
       protected_cols = intersect(protected_cols, colnames(df_expanded))
@@ -639,7 +575,7 @@ xtdml_data_from_data_frame = function(df,
       scaled_x = as.data.frame(scale(main, center = mins, scale = maxs - mins))
 
       non_x_cols = setdiff(names(df.transf), x_to_scale)
-      keep_cols = c(y_col, d_cols, z_cols, cluster_cols)
+      keep_cols = c(y_col, d_cols, cluster_cols)
       keep_cols = intersect(non_x_cols, keep_cols)
       unscaled_data = df.transf[, keep_cols, drop = FALSE]
 
@@ -656,7 +592,6 @@ xtdml_data_from_data_frame = function(df,
                           y_col  = y_col,
                           d_cols = d_cols,
                           dbar_col = dbar_col,
-                          z_cols = z_cols,
                           cluster_cols = cluster_cols,
                           approach = approach,
                           transformX = transformX)
