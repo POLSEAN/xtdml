@@ -4,7 +4,7 @@
 \alias{xtdml_plr}
 \title{Routine to estimate partially linear panel regression models with fixed effects within double machine learning.}
 \format{
-\link[R6:R6Class]{R6::R6Class} object inheriting from \link{XTDML}.
+\link[R6:R6Class]{R6::R6Class} object inheriting from \link{xtdml}.
 }
 \description{
 Routine to estimate partially linear panel regression models with fixed effects within double machine learning.
@@ -14,11 +14,12 @@ Consider partially linear panel regression (PLR) model of form
 
 \eqn{ Y_{it} = \theta_0 D_{it} + g_0(x_{it}) + \alpha_i + U_{it} (1)}
 
-\eqn{ D_{it} = m_0(x_{it}) + \gamma_i + \V_{it}  (2)}
+\eqn{ D_{it} = m_0(x_{it}) + \gamma_i + V_{it}  (2)}
 
 where (1) is the outcome equation and (2) is the treatment equation.
 }
 \examples{
+\dontrun{
 # An illustrative example using a regression tree (`rpart`)
 library(mlr3)
 
@@ -33,27 +34,51 @@ obj_xtdml_data = xtdml_data_from_data_frame(data,
                 cluster_cols = "id", approach = "fd-exact")
 
 # Set up DML estimation environment
-if (requireNamespace("rpart", quietly = TRUE)) {
-  learner = mlr3::lrn("regr.rpart")
+  learner = lrn("regr.rpart")
   ml_l = learner$clone()
   ml_m = learner$clone()
 
-  ob_xtdml = xtdml_plr$new(obj_xtdml_data,
+  obj_xtdml = xtdml_plr$new(obj_xtdml_data,
                            ml_l = ml_l, ml_m = ml_m,
                            score = "orth-PO", n_folds = 3)
-  ob_xtdml$fit()
-} else {
-  message("Package 'rpart' not installed, skipping example")
+  obj_xtdml$fit()
+}
+
+
+## ------------------------------------------------
+## Method `xtdml_plr$tune`
+## ------------------------------------------------
+
+\dontrun{
+# Tuning example with `rpart`
+
+# Set up a list of parameter grids
+param_grid = list("ml_l" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
+                            maxdepth = p_int(lower = 2, upper = 10)),
+                  "ml_m" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
+                            maxdepth = p_int(lower = 2, upper = 10)))
+
+tune_settings = list(n_folds_tune = 3,
+                   rsmp_tune = mlr3::rsmp("cv", folds = 3),
+                   terminator = mlr3tuning::trm("evals", n_evals = 10),
+                   algorithm = tnr("grid_search"), resolution = 20)
+
+xtdml_rpart$tune(param_set = param_grid, tune_settings = tune_settings)
+
+# Estimate target/causal parameter
+xtdml_rpart$fit()
+xtdml_rpart$print()
+
 }
 
 }
 \seealso{
-Other XTDML: 
-\code{\link{XTDML}}
+Other xtdml: 
+\code{\link{xtdml}}
 }
-\concept{XTDML}
+\concept{xtdml}
 \section{Super class}{
-\code{\link[XTDML:XTDML]{XTDML::XTDML}} -> \code{xtdml_plr}
+\code{\link[xtdml:xtdml]{xtdml::xtdml}} -> \code{xtdml_plr}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -67,14 +92,14 @@ Other XTDML:
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="XTDML" data-topic="XTDML" data-id="confint"><a href='../../XTDML/html/XTDML.html#method-XTDML-confint'><code>XTDML::XTDML$confint()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="XTDML" data-topic="XTDML" data-id="fit"><a href='../../XTDML/html/XTDML.html#method-XTDML-fit'><code>XTDML::XTDML$fit()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="XTDML" data-topic="XTDML" data-id="get_params"><a href='../../XTDML/html/XTDML.html#method-XTDML-get_params'><code>XTDML::XTDML$get_params()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="XTDML" data-topic="XTDML" data-id="learner_names"><a href='../../XTDML/html/XTDML.html#method-XTDML-learner_names'><code>XTDML::XTDML$learner_names()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="XTDML" data-topic="XTDML" data-id="params_names"><a href='../../XTDML/html/XTDML.html#method-XTDML-params_names'><code>XTDML::XTDML$params_names()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="XTDML" data-topic="XTDML" data-id="print"><a href='../../XTDML/html/XTDML.html#method-XTDML-print'><code>XTDML::XTDML$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="XTDML" data-topic="XTDML" data-id="split_samples"><a href='../../XTDML/html/XTDML.html#method-XTDML-split_samples'><code>XTDML::XTDML$split_samples()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="XTDML" data-topic="XTDML" data-id="summary"><a href='../../XTDML/html/XTDML.html#method-XTDML-summary'><code>XTDML::XTDML$summary()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="confint"><a href='../../xtdml/html/xtdml.html#method-xtdml-confint'><code>xtdml::xtdml$confint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="fit"><a href='../../xtdml/html/xtdml.html#method-xtdml-fit'><code>xtdml::xtdml$fit()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="get_params"><a href='../../xtdml/html/xtdml.html#method-xtdml-get_params'><code>xtdml::xtdml$get_params()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="learner_names"><a href='../../xtdml/html/xtdml.html#method-xtdml-learner_names'><code>xtdml::xtdml$learner_names()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="params_names"><a href='../../xtdml/html/xtdml.html#method-xtdml-params_names'><code>xtdml::xtdml$params_names()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="print"><a href='../../xtdml/html/xtdml.html#method-xtdml-print'><code>xtdml::xtdml$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="split_samples"><a href='../../xtdml/html/xtdml.html#method-xtdml-split_samples'><code>xtdml::xtdml$split_samples()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="summary"><a href='../../xtdml/html/xtdml.html#method-xtdml-summary'><code>xtdml::xtdml$summary()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -293,6 +318,35 @@ Default is \code{FALSE}.}
 \subsection{Returns}{
 self
 }
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+# Tuning example with `rpart`
+
+# Set up a list of parameter grids
+param_grid = list("ml_l" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
+                            maxdepth = p_int(lower = 2, upper = 10)),
+                  "ml_m" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
+                            maxdepth = p_int(lower = 2, upper = 10)))
+
+tune_settings = list(n_folds_tune = 3,
+                   rsmp_tune = mlr3::rsmp("cv", folds = 3),
+                   terminator = mlr3tuning::trm("evals", n_evals = 10),
+                   algorithm = tnr("grid_search"), resolution = 20)
+
+xtdml_rpart$tune(param_set = param_grid, tune_settings = tune_settings)
+
+# Estimate target/causal parameter
+xtdml_rpart$fit()
+xtdml_rpart$print()
+
+}
+
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-xtdml_plr-clone"></a>}}

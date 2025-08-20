@@ -32,11 +32,7 @@ Data object.}
 
 \item{\code{data_model}}{(\code{\link[data.table:data.table]{data.table}})\cr
 Internal data object that implements the causal panel model as specified by
-the user via \code{y_col}, \code{d_cols}, \code{x_cols}, \code{dbar_col},
-and  (in later implementations) \code{z_cols}.}
-
-\item{\code{n_instr}}{(\code{NULL}, \code{integer(1)}) \cr
-The number of instruments (in later implementations).}
+the user via \code{y_col}, \code{d_cols}, \code{x_cols}, \code{dbar_col}.}
 
 \item{\code{n_obs}}{(\code{integer(1)}) \cr
 The number of observations.}
@@ -52,9 +48,6 @@ The covariates.}
 
 \item{\code{y_col}}{(\code{character(1)}) \cr
 The outcome variable.}
-
-\item{\code{z_cols}}{(\code{NULL}, \code{character()}) \cr
-The instrumental variables (allowed in later implementations). Default is \code{NULL}.}
 
 \item{\code{cluster_cols}}{(\code{character()})\cr
 The cluster variable(s).}
@@ -96,7 +89,6 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
   x_cols = NULL,
   y_col = NULL,
   d_cols = NULL,
-  z_cols = NULL,
   dbar_col = NULL,
   cluster_cols = NULL,
   approach = NULL,
@@ -117,9 +109,6 @@ The outcome variable.}
 
 \item{\code{d_cols}}{(\code{character(1)}) \cr
 The treatment variable.}
-
-\item{\code{z_cols}}{(\code{NULL}, \code{character()}) \cr
-The instrumental variables. Default is \code{NULL}.}
 
 \item{\code{dbar_col}}{(\code{NULL}, character()\verb{) \\cr Individual mean of the treatment variable (used for the CRE approach). Default is }NULL`.}
 
@@ -158,7 +147,7 @@ Print \code{xtdml_data} objects.
 \if{latex}{\out{\hypertarget{method-xtdml_data-set_data_model}{}}}
 \subsection{Method \code{set_data_model()}}{
 Setter function for \code{data_model}. The function implements the causal model
-as specified by the user via \code{y_col}, \code{d_cols}, \code{x_cols}, \code{z_cols} and
+as specified by the user via \code{y_col}, \code{d_cols}, \code{x_cols} and
 \code{cluster_cols} and assigns the role for the treatment variables in the
 multiple-treatment case.
 \subsection{Usage}{

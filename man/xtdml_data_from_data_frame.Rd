@@ -10,7 +10,6 @@ xtdml_data_from_data_frame(
   x_cols = NULL,
   y_col = NULL,
   d_cols = NULL,
-  z_cols = NULL,
   cluster_cols = NULL,
   approach = NULL,
   transformX = NULL
@@ -28,9 +27,6 @@ The outcome variable.}
 
 \item{d_cols}{(\code{character()}) \cr
 The treatment variable(s).}
-
-\item{z_cols}{(\code{NULL}, \code{character()}) \cr
-The instrumental variables. Default is \code{NULL}.}
 
 \item{cluster_cols}{(\code{NULL}, \code{character()}) \cr
 The cluster variables. Default is \code{NULL}.}
@@ -55,7 +51,9 @@ Creates a new instance of class \code{xtdml_data}.
 Initalization of DoubleMLData from \code{data.frame}.
 }
 \examples{
-# Generate simulated dataset
+
+\dontrun{
+# Generate simulated panel dataset from `xtdml`
 data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
 
 # Set up DML data environment
@@ -67,5 +65,7 @@ obj_xtdml_data = xtdml_data_from_data_frame(data,
                 transformX = "no")
 
 obj_xtdml_data$print()
+
+}
 
 }

@@ -53,8 +53,9 @@ The nuisance functions are given by
 with \eqn{a_1=b_2=0.25} and \eqn{a_2=b_1=0.5}.
 }
 \examples{
+\dontrun{
 df = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 20, theta = 0.5, rho=0.8)
-
+}
 }
 \references{
 Clarke, P. S. and Polselli,  A. (2025). Double Machine Learning
