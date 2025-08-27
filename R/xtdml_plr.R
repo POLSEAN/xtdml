@@ -231,7 +231,7 @@ xtdml_plr <- R6Class("xtdml_plr",
     #' in the [mlr3tuning](https://mlr3tuning.mlr-org.com/) package. For more
     #' information on tuning in [mlr3](https://mlr3.mlr-org.com/), we refer to
     #' the section on parameter tuning in the
-    #' [mlr3 book](https://mlr3book.mlr-org.com/optimization.html#tuning).
+    #' [mlr3 book](https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html).
     #'
     #' @param param_set (named `list()`) \cr
     #' A named `list` with a parameter grid for each nuisance model/learner
@@ -279,6 +279,7 @@ xtdml_plr <- R6Class("xtdml_plr",
     #' Default is `FALSE`.
     #'
     #' @examples
+    #' \dontrun{
     #' # Tuning example with `rpart`
     #' library(mlr3)
     #' library(rpart)
@@ -286,7 +287,7 @@ xtdml_plr <- R6Class("xtdml_plr",
     #' library(mlr3tuning)
     #'
     #' # Generate simulated dataset
-    #' data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
+    #' data = make_plpr_data(n_obs = 300, t_per = 5, dim_x = 30, theta = 0.5, rho=0.8)
     #'
     #' x_cols  = paste0("X", 1:30)
     #'
@@ -311,15 +312,15 @@ xtdml_plr <- R6Class("xtdml_plr",
     #'
     #' tune_settings = list(n_folds_tune = 3,
     #'                    rsmp_tune = mlr3::rsmp("cv", folds = 3),
-    #'                    terminator = mlr3tuning::trm("evals", n_evals = 10),
-    #'                    algorithm = tnr("grid_search"), resolution = 20)
+    #'                    terminator = mlr3tuning::trm("evals", n_evals = 5),
+    #'                    algorithm = tnr("grid_search"), resolution = 5)
     #'
     #' obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
     #'
     #' # Estimate target/causal parameter
     #' obj_xtdml$fit()
     #' obj_xtdml$print()
-    #'
+    #' }
     #'
     #' @return self
     tune = function(param_set, tune_settings = list(

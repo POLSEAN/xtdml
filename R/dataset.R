@@ -11,7 +11,7 @@
 #' \eqn{D_{it} = m_0(X_{it}) + \gamma_i + V_i,}
 #'
 #' where \eqn{U_{it} \sim \mathcal{N}(0,1)}, \eqn{V_{it}  \sim \mathcal{N}(0,1)},
-#' \eqn{\alpha_i = \rho A_i _i + \sqrt{1-\rho^2} B_i} with
+#' \eqn{\alpha_i = \rho A_i + \sqrt{1-\rho^2} B_i} with
 #' \eqn{A_i\sim \mathcal{N}(3,3)} \eqn{B_i\sim \mathcal{N}(0,1)}, and  \eqn{\gamma_i\sim \mathcal{N}(0,5)}.
 #'
 #' The covariates are distributed as \eqn{X_{it,p} \sim A_i + \mathcal{N}(0, 5)},

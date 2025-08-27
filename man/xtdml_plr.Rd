@@ -48,6 +48,7 @@ obj_xtdml_data = xtdml_data_from_data_frame(data,
 ## Method `xtdml_plr$tune`
 ## ------------------------------------------------
 
+\dontrun{
 # Tuning example with `rpart`
 library(mlr3)
 library(rpart)
@@ -55,7 +56,7 @@ library(mlr3misc)
 library(mlr3tuning)
 
 # Generate simulated dataset
-data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
+data = make_plpr_data(n_obs = 300, t_per = 5, dim_x = 30, theta = 0.5, rho=0.8)
 
 x_cols  = paste0("X", 1:30)
 
@@ -80,15 +81,15 @@ param_grid = list("ml_l" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
 
 tune_settings = list(n_folds_tune = 3,
                    rsmp_tune = mlr3::rsmp("cv", folds = 3),
-                   terminator = mlr3tuning::trm("evals", n_evals = 10),
-                   algorithm = tnr("grid_search"), resolution = 20)
+                   terminator = mlr3tuning::trm("evals", n_evals = 5),
+                   algorithm = tnr("grid_search"), resolution = 5)
 
 obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
 
 # Estimate target/causal parameter
 obj_xtdml$fit()
 obj_xtdml$print()
-
+}
 
 }
 \seealso{
@@ -271,7 +272,7 @@ The hyperparameter-tuning is performed using the tuning methods provided
 in the \href{https://mlr3tuning.mlr-org.com/}{mlr3tuning} package. For more
 information on tuning in \href{https://mlr3.mlr-org.com/}{mlr3}, we refer to
 the section on parameter tuning in the
-\href{https://mlr3book.mlr-org.com/optimization.html#tuning}{mlr3 book}.
+\href{https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html}{mlr3 book}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{xtdml_plr$tune(
   param_set,
@@ -339,14 +340,15 @@ self
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{# Tuning example with `rpart`
+\preformatted{\dontrun{
+# Tuning example with `rpart`
 library(mlr3)
 library(rpart)
 library(mlr3misc)
 library(mlr3tuning)
 
 # Generate simulated dataset
-data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
+data = make_plpr_data(n_obs = 300, t_per = 5, dim_x = 30, theta = 0.5, rho=0.8)
 
 x_cols  = paste0("X", 1:30)
 
@@ -371,15 +373,15 @@ param_grid = list("ml_l" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
 
 tune_settings = list(n_folds_tune = 3,
                    rsmp_tune = mlr3::rsmp("cv", folds = 3),
-                   terminator = mlr3tuning::trm("evals", n_evals = 10),
-                   algorithm = tnr("grid_search"), resolution = 20)
+                   terminator = mlr3tuning::trm("evals", n_evals = 5),
+                   algorithm = tnr("grid_search"), resolution = 5)
 
 obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
 
 # Estimate target/causal parameter
 obj_xtdml$fit()
 obj_xtdml$print()
-
+}
 
 }
 \if{html}{\out{</div>}}
