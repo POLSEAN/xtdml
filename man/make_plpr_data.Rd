@@ -38,7 +38,7 @@ The data generating process is defined as
 \eqn{D_{it} = m_0(X_{it}) + \gamma_i + V_i,}
 
 where \eqn{U_{it} \sim \mathcal{N}(0,1)}, \eqn{V_{it}  \sim \mathcal{N}(0,1)},
-\eqn{\alpha_i = \rho A_i _i + \sqrt{1-\rho^2} B_i} with
+\eqn{\alpha_i = \rho A_i + \sqrt{1-\rho^2} B_i} with
 \eqn{A_i\sim \mathcal{N}(3,3)} \eqn{B_i\sim \mathcal{N}(0,1)}, and  \eqn{\gamma_i\sim \mathcal{N}(0,5)}.
 
 The covariates are distributed as \eqn{X_{it,p} \sim A_i + \mathcal{N}(0, 5)},
@@ -53,9 +53,8 @@ The nuisance functions are given by
 with \eqn{a_1=b_2=0.25} and \eqn{a_2=b_1=0.5}.
 }
 \examples{
-\dontrun{
 df = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 20, theta = 0.5, rho=0.8)
-}
+
 }
 \references{
 Clarke, P. S. and Polselli,  A. (2025). Double Machine Learning

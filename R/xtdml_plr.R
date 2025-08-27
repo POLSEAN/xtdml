@@ -18,9 +18,9 @@
 #' @usage NULL
 #'
 #' @examples
-#' \dontrun{
 #' # An illustrative example using a regression tree (`rpart`)
 #' library(mlr3)
+#' library(rpart)
 #'
 #' # Generate simulated dataset
 #' data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
@@ -41,7 +41,6 @@
 #'                            ml_l = ml_l, ml_m = ml_m,
 #'                            score = "orth-PO", n_folds = 3)
 #'   obj_xtdml$fit()
-#' }
 #'
 #' @export
 xtdml_plr <- R6Class("xtdml_plr",
@@ -232,7 +231,7 @@ xtdml_plr <- R6Class("xtdml_plr",
     #' in the [mlr3tuning](https://mlr3tuning.mlr-org.com/) package. For more
     #' information on tuning in [mlr3](https://mlr3.mlr-org.com/), we refer to
     #' the section on parameter tuning in the
-    #' [mlr3 book](https://mlr3book.mlr-org.com/optimization.html#tuning).
+    #' [mlr3 book](https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html).
     #'
     #' @param param_set (named `list()`) \cr
     #' A named `list` with a parameter grid for each nuisance model/learner
@@ -282,7 +281,29 @@ xtdml_plr <- R6Class("xtdml_plr",
     #' @examples
     #' \dontrun{
     #' # Tuning example with `rpart`
+    #' library(mlr3)
+    #' library(rpart)
+    #' library(mlr3misc)
+    #' library(mlr3tuning)
     #'
+    #' # Generate simulated dataset
+    #' data = make_plpr_data(n_obs = 300, t_per = 5, dim_x = 30, theta = 0.5, rho=0.8)
+    #'
+    #' x_cols  = paste0("X", 1:30)
+    #'
+    #' # Set up DML data environment
+    #' obj_xtdml_data = xtdml_data_from_data_frame(data,
+    #'                 x_cols = x_cols,  y_col = "y", d_cols = "d",
+    #'                 cluster_cols = "id", approach = "fd-exact")
+    #'
+    #' # Set up DML estimation environment
+    #'   learner = lrn("regr.rpart")
+    #'   ml_l = learner$clone()
+    #'   ml_m = learner$clone()
+    #'
+    #'   obj_xtdml = xtdml_plr$new(obj_xtdml_data,
+    #'                            ml_l = ml_l, ml_m = ml_m,
+    #'                            score = "orth-PO", n_folds = 3)
     #' # Set up a list of parameter grids
     #' param_grid = list("ml_l" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
     #'                             maxdepth = p_int(lower = 2, upper = 10)),
@@ -291,15 +312,14 @@ xtdml_plr <- R6Class("xtdml_plr",
     #'
     #' tune_settings = list(n_folds_tune = 3,
     #'                    rsmp_tune = mlr3::rsmp("cv", folds = 3),
-    #'                    terminator = mlr3tuning::trm("evals", n_evals = 10),
-    #'                    algorithm = tnr("grid_search"), resolution = 20)
+    #'                    terminator = mlr3tuning::trm("evals", n_evals = 5),
+    #'                    algorithm = tnr("grid_search"), resolution = 5)
     #'
-    #' xtdml_rpart$tune(param_set = param_grid, tune_settings = tune_settings)
+    #' obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
     #'
     #' # Estimate target/causal parameter
-    #' xtdml_rpart$fit()
-    #' xtdml_rpart$print()
-    #'
+    #' obj_xtdml$fit()
+    #' obj_xtdml$print()
     #' }
     #'
     #' @return self
