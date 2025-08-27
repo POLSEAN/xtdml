@@ -98,7 +98,7 @@ Other xtdml:
 }
 \concept{xtdml}
 \section{Super class}{
-\code{xtdml::xtdml} -> \code{xtdml_plr}
+\code{\link[xtdml:xtdml]{xtdml::xtdml}} -> \code{xtdml_plr}
 }
 \section{Methods}{
 \subsection{Public methods}{
