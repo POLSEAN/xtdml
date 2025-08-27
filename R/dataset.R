@@ -50,6 +50,7 @@
 #'
 #' @examples
 #' df = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 20, theta = 0.5, rho=0.8)
+#'
 #' @export
 make_plpr_data = function(n_obs = 500, t_per = 10,
                            dim_x = 20, theta = 0.5,

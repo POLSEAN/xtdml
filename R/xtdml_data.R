@@ -424,7 +424,6 @@ xtdml_data = R6Class("xtdml_data",
 #'
 #' @examples
 #'
-#' \dontrun{
 #' # Generate simulated panel dataset from `xtdml`
 #' data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
 #'
@@ -438,7 +437,6 @@ xtdml_data = R6Class("xtdml_data",
 #'
 #' obj_xtdml_data$print()
 #'
-#' }
 #'
 #' @export
 #'
