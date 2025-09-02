@@ -19,14 +19,17 @@ Consider partially linear panel regression (PLR) model of form
 where (1) is the outcome equation and (2) is the treatment equation.
 }
 \examples{
+
 # An illustrative example using a regression tree (`rpart`)
 library(mlr3)
 library(rpart)
 
-# Generate simulated dataset
-data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
+set.seed(1234)
 
-x_cols  = paste0("X", 1:30)
+# Generate simulated dataset
+data = make_plpr_data(n_obs = 100, t_per = 5, dim_x = 10, theta = 0.5, rho=0.8)
+
+x_cols  = paste0("X", 1:10)
 
 # Set up DML data environment
 obj_xtdml_data = xtdml_data_from_data_frame(data,
@@ -34,21 +37,20 @@ obj_xtdml_data = xtdml_data_from_data_frame(data,
                 cluster_cols = "id", approach = "fd-exact")
 
 # Set up DML estimation environment
-  learner = lrn("regr.rpart")
-  ml_l = learner$clone()
-  ml_m = learner$clone()
+ learner = lrn("regr.rpart")
+ ml_l = learner$clone()
+ ml_m = learner$clone()
 
-  obj_xtdml = xtdml_plr$new(obj_xtdml_data,
+ obj_xtdml = xtdml_plr$new(obj_xtdml_data,
                            ml_l = ml_l, ml_m = ml_m,
                            score = "orth-PO", n_folds = 3)
-  obj_xtdml$fit()
+ obj_xtdml$fit()
 
 
 ## ------------------------------------------------
 ## Method `xtdml_plr$tune`
 ## ------------------------------------------------
 
-\dontrun{
 # Tuning example with `rpart`
 library(mlr3)
 library(rpart)
@@ -56,9 +58,9 @@ library(mlr3misc)
 library(mlr3tuning)
 
 # Generate simulated dataset
-data = make_plpr_data(n_obs = 300, t_per = 5, dim_x = 30, theta = 0.5, rho=0.8)
+data = make_plpr_data(n_obs = 100, t_per = 5, dim_x = 10, theta = 0.5, rho=0.8)
 
-x_cols  = paste0("X", 1:30)
+x_cols  = paste0("X", 1:10)
 
 # Set up DML data environment
 obj_xtdml_data = xtdml_data_from_data_frame(data,
@@ -89,7 +91,6 @@ obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
 # Estimate target/causal parameter
 obj_xtdml$fit()
 obj_xtdml$print()
-}
 
 }
 \seealso{
@@ -340,17 +341,16 @@ self
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{\dontrun{
-# Tuning example with `rpart`
+\preformatted{# Tuning example with `rpart`
 library(mlr3)
 library(rpart)
 library(mlr3misc)
 library(mlr3tuning)
 
 # Generate simulated dataset
-data = make_plpr_data(n_obs = 300, t_per = 5, dim_x = 30, theta = 0.5, rho=0.8)
+data = make_plpr_data(n_obs = 100, t_per = 5, dim_x = 10, theta = 0.5, rho=0.8)
 
-x_cols  = paste0("X", 1:30)
+x_cols  = paste0("X", 1:10)
 
 # Set up DML data environment
 obj_xtdml_data = xtdml_data_from_data_frame(data,
@@ -381,7 +381,6 @@ obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
 # Estimate target/causal parameter
 obj_xtdml$fit()
 obj_xtdml$print()
-}
 
 }
 \if{html}{\out{</div>}}

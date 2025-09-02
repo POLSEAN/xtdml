@@ -425,6 +425,8 @@ xtdml_data = R6Class("xtdml_data",
 #' @examples
 #'
 #' # Generate simulated panel dataset from `xtdml`
+#' set.seed(1234)
+#'
 #' data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
 #'
 #' # Set up DML data environment

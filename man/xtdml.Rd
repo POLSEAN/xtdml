@@ -9,15 +9,13 @@
 \description{
 Abstract base class that cannot be initialized.
 
-\code{xtdml} is used to estimate the structural parameter (treatment effect)
-in partially linear regression models with panel data under the fixed effect
-assumption using double machine learning  (Clarke and Polselli, 2025).
-\code{xtdml} allows the estimation of the nuisance functions in the model by machine
-learning methods based on the panel data approach chosen by the user,
-and computation of the Neyman-orthogonal score functions.
-
-\code{xtdml} is built on \code{DoubleML} (Bach et al., 2024) which is an object-oriented implementation using
-the 'mlr3' ecosystem and the 'R6' package. \code{xtdml} follows the notation in \code{DoubleML}.
+Implementation of partially linear panel regression (PLPR) models with high-dimensional
+confounding variables and exogenous treatment variable within the double machine learning
+framework. It allows the estimation of the structural parameter (treatment effect)
+in static panel data models with fixed effects using panel data approaches established in
+\href{https://academic.oup.com/ectj/advance-article/doi/10.1093/ectj/utaf011/8120202}{Clarke and Polselli (2025)}.
+\code{xtdml} is built on the object-oriented \code{DoubleML} (\href{https://www.jstatsoft.org/article/view/v108i03}{Bach et al., 2024})
+using the \code{mlr3} ecosystem.
 }
 \seealso{
 Other xtdml: 
