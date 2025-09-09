@@ -8,7 +8,7 @@ The `xtdml` package estimates the structural (causal) parameter from panel data 
   Y_{it} = \theta_0 D_{it} + g_0(X_{it}) + \alpha_i + U_{it}
 ```
 ```math  
-  D_{it} = m_0(X_{it}) + \gamma_i + V_i,
+  D_{it} = m_0(X_{it}) + \gamma_i + V_{it},
 ```
 where 
   * $Y_{it}$ is the output, $D_{it}$ the treatment, $X_{it}$ the covariates
