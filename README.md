@@ -36,17 +36,29 @@ where
 > 4. Vignettes will be added soon.
 
 
-## Installing the package from GitHub
-The current version can be installed via devtools:
+## Installing the package
+The installation of `xtdml` can be done from CRAN using
+```
+install.packages("xtdml")
+library(xtdml)
+```
+or via devtools from GitHub for the latest version
 ```
 library(devtools)
 install_github("POLSEAN/xtdml")
 ```
 
 ## References
-Bach, P., Chernozhukov, V., Kurz, M. S., Spindler, M. and Klaassen, S. (2024), DoubleML - An Object-Oriented Implementation of Double Machine Learning in R, *Journal of Statistical Software*, 108(3): 1-56, doi:10.18637/jss.v108.i03, arXiv:2103.09603.
+Bach, P., Chernozhukov, V., Kurz, M. S., Spindler, M. and Klaassen, S. (2024), DoubleML - An Object-Oriented Implementation of Double Machine Learning in R, *Journal of Statistical Software*, 108(3): 1-56, doi:10.18637/jss.v108.i03.
+
+Bach P, Kurz MS, Chernozhukov V, Spindler M, Klaassen S (2024b). **DoubleML**: Double Machine Learning in R. R package version 1.0.2, URL https://cran.r-project.org/
+web/packages/DoubleML/index.html.
 
 Chernozhukov, V., Chetverikov, D., Demirer, M., Duflo, E., Hansen, C., Newey, W., and Robins, J. (2018). Double/debiased machine learning for treatment and structural parameters. *The Econometrics Journal*, 21(1):C1–C68.
 
 Clarke, P. S. and Polselli,  A. (2025). Double Machine Learning for Static Panel Models with Fixed Effects. *The Econometrics Journal*. DOI: 10.1093/ectj/utaf011.
+
+Polselli A (2025). **xtdml**: Double Machine Learning for Static Panel Models with Fixed Ef-
+fects. R package version 0.1.5, URL https://cran.r-project.org/web/packages/xtdml/
+index.html 
 
