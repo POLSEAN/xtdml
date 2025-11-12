@@ -164,6 +164,7 @@ xtdml_data = R6Class("xtdml_data",
                            }
                          }
                        },
+
                        #' @field time_id (`character()`)\cr
                        #' The time identifier.
                        time_id = function(value) {
@@ -181,6 +182,7 @@ xtdml_data = R6Class("xtdml_data",
                            }
                          }
                        },
+
                        #' @field cluster_cols (`character()`)\cr
                        #' The cluster variable(s).
                        cluster_cols = function(value) {
@@ -198,6 +200,7 @@ xtdml_data = R6Class("xtdml_data",
                            }
                          }
                        },
+
                        #' @field n_cluster_vars (`integer(1)`) \cr
                        #' The number of cluster variables.
                        n_cluster_vars = function(value) {

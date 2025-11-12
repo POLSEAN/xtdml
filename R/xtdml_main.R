@@ -1113,7 +1113,6 @@ xtdml <- R6Class("xtdml",
                            private$task_type[[this_learner]])
                        }
                      }
-
                      # NEW: tuner (modern API)
                      if (!test_names(names(tune_settings), must.include = "tuner")) {
                        tune_settings$tuner = mlr3tuning::tnr("grid_search", resolution = 5)

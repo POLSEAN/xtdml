@@ -13,7 +13,6 @@ Routine to estimate partially linear panel regression models with fixed effects 
 Consider partially linear panel regression (PLR) model of form
 
 \eqn{ Y_{it} = \theta_0 D_{it} + g_0(x_{it}) + \alpha_i + U_{it} (1)}
-
 \eqn{ D_{it} = m_0(x_{it}) + \gamma_i + V_{it}  (2)}
 
 where (1) is the outcome equation and (2) is the treatment equation.
