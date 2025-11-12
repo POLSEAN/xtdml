@@ -19,58 +19,31 @@ Consider partially linear panel regression (PLR) model of form
 where (1) is the outcome equation and (2) is the treatment equation.
 }
 \examples{
+
 # An illustrative example using a regression tree (`rpart`)
 library(mlr3)
 library(rpart)
-
-# Generate simulated dataset
-data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
-
-x_cols  = paste0("X", 1:30)
-
-# Set up DML data environment
-obj_xtdml_data = xtdml_data_from_data_frame(data,
-                x_cols = x_cols,  y_col = "y", d_cols = "d",
-                cluster_cols = "id", approach = "fd-exact")
-
-# Set up DML estimation environment
-  learner = lrn("regr.rpart")
-  ml_l = learner$clone()
-  ml_m = learner$clone()
-
-  obj_xtdml = xtdml_plr$new(obj_xtdml_data,
-                           ml_l = ml_l, ml_m = ml_m,
-                           score = "orth-PO", n_folds = 3)
-  obj_xtdml$fit()
-
-
-## ------------------------------------------------
-## Method `xtdml_plr$tune`
-## ------------------------------------------------
-
-\dontrun{
-# Tuning example with `rpart`
-library(mlr3)
-library(rpart)
-library(mlr3misc)
 library(mlr3tuning)
+set.seed(1234)
 
 # Generate simulated dataset
-data = make_plpr_data(n_obs = 300, t_per = 5, dim_x = 30, theta = 0.5, rho=0.8)
+data = make_plpr_data(n_obs = 100, t_per = 5, dim_x = 10, theta = 0.5, rho=0.8)
 
-x_cols  = paste0("X", 1:30)
+x_cols  = paste0("X", 1:10)
 
 # Set up DML data environment
 obj_xtdml_data = xtdml_data_from_data_frame(data,
                 x_cols = x_cols,  y_col = "y", d_cols = "d",
-                cluster_cols = "id", approach = "fd-exact")
+                panel_id = "id",
+                time_id = "time",
+                approach = "fd-exact")
 
 # Set up DML estimation environment
-  learner = lrn("regr.rpart")
-  ml_l = learner$clone()
-  ml_m = learner$clone()
+ learner = lrn("regr.rpart")
+ ml_l = learner$clone()
+ ml_m = learner$clone()
 
-  obj_xtdml = xtdml_plr$new(obj_xtdml_data,
+ obj_xtdml = xtdml_plr$new(obj_xtdml_data,
                            ml_l = ml_l, ml_m = ml_m,
                            score = "orth-PO", n_folds = 3)
 # Set up a list of parameter grids
@@ -82,14 +55,10 @@ param_grid = list("ml_l" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
 tune_settings = list(n_folds_tune = 3,
                    rsmp_tune = mlr3::rsmp("cv", folds = 3),
                    terminator = mlr3tuning::trm("evals", n_evals = 5),
-                   algorithm = tnr("grid_search"), resolution = 5)
+                   tuner = tnr("grid_search", resolution = 10))
 
 obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
-
-# Estimate target/causal parameter
-obj_xtdml$fit()
-obj_xtdml$print()
-}
+ obj_xtdml$fit()
 
 }
 \seealso{
@@ -338,56 +307,6 @@ Default is \code{FALSE}.}
 \subsection{Returns}{
 self
 }
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{\dontrun{
-# Tuning example with `rpart`
-library(mlr3)
-library(rpart)
-library(mlr3misc)
-library(mlr3tuning)
-
-# Generate simulated dataset
-data = make_plpr_data(n_obs = 300, t_per = 5, dim_x = 30, theta = 0.5, rho=0.8)
-
-x_cols  = paste0("X", 1:30)
-
-# Set up DML data environment
-obj_xtdml_data = xtdml_data_from_data_frame(data,
-                x_cols = x_cols,  y_col = "y", d_cols = "d",
-                cluster_cols = "id", approach = "fd-exact")
-
-# Set up DML estimation environment
-  learner = lrn("regr.rpart")
-  ml_l = learner$clone()
-  ml_m = learner$clone()
-
-  obj_xtdml = xtdml_plr$new(obj_xtdml_data,
-                           ml_l = ml_l, ml_m = ml_m,
-                           score = "orth-PO", n_folds = 3)
-# Set up a list of parameter grids
-param_grid = list("ml_l" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
-                            maxdepth = p_int(lower = 2, upper = 10)),
-                  "ml_m" = ps(cp = p_dbl(lower = 0.01, upper = 0.02),
-                            maxdepth = p_int(lower = 2, upper = 10)))
-
-tune_settings = list(n_folds_tune = 3,
-                   rsmp_tune = mlr3::rsmp("cv", folds = 3),
-                   terminator = mlr3tuning::trm("evals", n_evals = 5),
-                   algorithm = tnr("grid_search"), resolution = 5)
-
-obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
-
-# Estimate target/causal parameter
-obj_xtdml$fit()
-obj_xtdml$print()
-}
-
-}
-\if{html}{\out{</div>}}
-
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-xtdml_plr-clone"></a>}}

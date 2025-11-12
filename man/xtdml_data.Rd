@@ -49,6 +49,12 @@ The covariates.}
 \item{\code{y_col}}{(\code{character(1)}) \cr
 The outcome variable.}
 
+\item{\code{panel_id}}{(\code{character()})\cr
+The panel identifier.}
+
+\item{\code{time_id}}{(\code{character()})\cr
+The time identifier.}
+
 \item{\code{cluster_cols}}{(\code{character()})\cr
 The cluster variable(s).}
 
@@ -90,6 +96,8 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
   y_col = NULL,
   d_cols = NULL,
   dbar_col = NULL,
+  panel_id = NULL,
+  time_id = NULL,
   cluster_cols = NULL,
   approach = NULL,
   transformX = NULL
@@ -111,6 +119,12 @@ The outcome variable.}
 The treatment variable.}
 
 \item{\code{dbar_col}}{(\code{NULL}, character()\verb{) \\cr Individual mean of the treatment variable (used for the CRE approach). Default is }NULL`.}
+
+\item{\code{panel_id}}{(\code{character()}) \cr
+The panel identifier.}
+
+\item{\code{time_id}}{(\code{character()}) \cr
+The time identifier.}
 
 \item{\code{cluster_cols}}{(\code{character()}) \cr
 The cluster variable(s).}
@@ -147,7 +161,7 @@ Print \code{xtdml_data} objects.
 \if{latex}{\out{\hypertarget{method-xtdml_data-set_data_model}{}}}
 \subsection{Method \code{set_data_model()}}{
 Setter function for \code{data_model}. The function implements the causal model
-as specified by the user via \code{y_col}, \code{d_cols}, \code{x_cols} and
+as specified by the user via \code{y_col}, \code{d_cols}, \code{x_cols}, \code{panel_id}, \code{time_id} and
 \code{cluster_cols} and assigns the role for the treatment variables in the
 multiple-treatment case.
 \subsection{Usage}{

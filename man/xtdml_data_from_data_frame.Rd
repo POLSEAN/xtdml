@@ -10,6 +10,8 @@ xtdml_data_from_data_frame(
   x_cols = NULL,
   y_col = NULL,
   d_cols = NULL,
+  panel_id = NULL,
+  time_id = NULL,
   cluster_cols = NULL,
   approach = NULL,
   transformX = NULL
@@ -28,12 +30,18 @@ The outcome variable.}
 \item{d_cols}{(\code{character()}) \cr
 The treatment variable(s).}
 
+\item{panel_id}{(\code{NULL}, \code{character()}) \cr
+The panel identifier. Default is \code{NULL}.}
+
+\item{time_id}{(\code{NULL}, \code{character()}) \cr
+The time identifier. Default is \code{NULL}.}
+
 \item{cluster_cols}{(\code{NULL}, \code{character()}) \cr
-The cluster variables. Default is \code{NULL}.}
+The cluster variables. Default is \code{panel_id}.}
 
 \item{approach}{(\code{character(1)}) \cr
-A \code{character()} (\code{"fd-exact"}, \code{"wg-approx"} or \code{"cre"}) specifying the panel data
-technique to apply to estimate the causal model. Default is \code{"fd-exact"}.}
+A \code{character()} (\code{"fd-exact"}, \code{"wg-approx"}, \code{"cre"} or \code{"pooled"}) specifying the panel data
+technique to apply to estimate the causal model. Default is \code{"NULL"}.}
 
 \item{transformX}{(\code{character(1)}) \cr
 A \code{character()} (\code{"no"}, \code{"minmax"} or \code{"poly"}) specifying the type
@@ -60,7 +68,10 @@ x_cols  = paste0("X", 1:30)
 
 obj_xtdml_data = xtdml_data_from_data_frame(data,
                 x_cols = x_cols,  y_col = "y", d_cols = "d",
-                cluster_cols = "id", approach = "fd-exact",
+                panel_id = "id",
+                time_id = "time",
+                cluster_cols = "id",
+                approach = "fd-exact",
                 transformX = "no")
 
 obj_xtdml_data$print()

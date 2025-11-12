@@ -1,22 +1,24 @@
 Package: xtdml
 Type: Package
 Title: Double Machine Learning for Static Panel Models with Fixed Effects
-Version: 0.1.4
+Version: 0.1.9
+Date: 2025-12-06
 Authors@R:
     person("Annalivia", "Polselli",  role = c("aut", "cre"),
     email = "apolselli.econ@gmail.com", 
     comment = c(ORCID = "0009-0002-7579-7926"))
-Author: Annalivia Polselli [aut, cre],
 Maintainer: Annalivia Polselli <apolselli.econ@gmail.com>
 Description: The 'xtdml' package implements partially linear panel regression (PLPR) models with high-dimensional confounding variables and an exogenous treatment variable within the double machine learning framework. The package is used to estimate the structural parameter (treatment effect) in static panel data models with fixed effects using the approaches established in Clarke and Polselli (2025) <doi:10.1093/ectj/utaf011>. 'xtdml' is built on the object-oriented package 'DoubleML' (Bach et al., 2024) <doi:10.18637/jss.v108.i03> using the 'mlr3' ecosystem.
 License: GPL-2 | GPL-3
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
-Imports: R6 (>= 2.4.1), data.table (>= 1.12.8), mlr3 (>= 0.5.0), mlr3tuning (>= 0.3.0), 
-        mlr3learners (>= 0.3.0), mlr3misc, mvtnorm, utils, clusterGeneration, 
-        readstata13, magrittr, dplyr, stats, MLmetrics, checkmate
+Imports: R6 (>= 2.4.1), data.table (>= 1.12.8),  mlr3 (>= 0.19.0), mlr3tuning (>= 0.20.0), 
+        mlr3learners (>= 0.3.0), mlr3misc (>= 0.19.0),
+        mvtnorm, utils, clusterGeneration, readstata13, magrittr, dplyr, stats, 
+        MLmetrics, checkmate
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
     rpart,
-    mlr3pipelines
+    mlr3pipelines,
+    bbotk (>= 1.6.0)

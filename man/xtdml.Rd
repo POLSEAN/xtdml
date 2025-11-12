@@ -9,15 +9,28 @@
 \description{
 Abstract base class that cannot be initialized.
 
-\code{xtdml} is used to estimate the structural parameter (treatment effect)
-in partially linear regression models with panel data under the fixed effect
-assumption using double machine learning  (Clarke and Polselli, 2025).
+\code{xtdml} estimates the structural parameter (treatment effect)
+in partially linear panel regression models with fixed effects
+using double machine learning  (Clarke and Polselli, 2025).
 \code{xtdml} allows the estimation of the nuisance functions in the model by machine
 learning methods based on the panel data approach chosen by the user,
 and computation of the Neyman-orthogonal score functions.
 
-\code{xtdml} is built on \code{DoubleML} (Bach et al., 2024) which is an object-oriented implementation using
-the 'mlr3' ecosystem and the 'R6' package. \code{xtdml} follows the notation in \code{DoubleML}.
+\code{xtdml} builds on the object-oriented architecture of \code{DoubleML} (Bach et al., 2024), using
+the 'mlr3' ecosystem and the 'R6' package. \code{xtdml} follows most of the notation of \code{DoubleML}.
+}
+\examples{
+
+## ------------------------------------------------
+## Method `xtdml$tune`
+## ------------------------------------------------
+
+tune_settings = list(
+  n_folds_tune = 5,
+  rsmp_tune = mlr3::rsmp("cv", folds = 5),
+  terminator = mlr3tuning::trm("evals", n_evals = 20),
+  tuner = mlr3tuning::tnr("grid_search", resolution = 10))
+
 }
 \seealso{
 Other xtdml: 
@@ -220,19 +233,19 @@ self
 \if{html}{\out{<a id="method-xtdml-tune"></a>}}
 \if{latex}{\out{\hypertarget{method-xtdml-tune}{}}}
 \subsection{Method \code{tune()}}{
-Hyperparameter-tuning for DML models with FE.
+Hyperparameter tuning for Double Machine Learning (DML) models with fixed effects.
 
-The hyperparameter-tuning is performed using the tuning methods provided
-in the \href{https://mlr3tuning.mlr-org.com/}{mlr3tuning} package. For more
-information on tuning in \href{https://mlr3.mlr-org.com/}{mlr3}, we refer to
-the section on parameter tuning in the
-\href{https://mlr3book.mlr-org.com/optimization.html#tuning}{mlr3 book}.
+The hyperparameter tuning is performed using the tuning methods provided
+in the \href{https://mlr3tuning.mlr-org.com/}{mlr3tuning} package.
+For more information on tuning in \href{https://mlr3.mlr-org.com/}{mlr3},
+see the chapter on hyperparameter optimization in the
+\href{https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html}{mlr3 book}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{xtdml$tune(
   param_set,
   tune_settings = list(n_folds_tune = 5, rsmp_tune = mlr3::rsmp("cv", folds = 5), measure
-    = NULL, terminator = mlr3tuning::trm("evals", n_evals = 20), algorithm =
-    mlr3tuning::tnr("grid_search"), resolution = 5),
+    = NULL, terminator = mlr3tuning::trm("evals", n_evals = 20), tuner =
+    mlr3tuning::tnr("grid_search", resolution = 10)),
   tune_on_folds = FALSE
 )}\if{html}{\out{</div>}}
 }
@@ -242,56 +255,57 @@ the section on parameter tuning in the
 \describe{
 \item{\code{param_set}}{(named \code{list()}) \cr
 A named \code{list} with a parameter grid for each nuisance model/learner
-(see method \code{learner_names()}). The parameter grid must be an object of
-class \link[paradox:ParamSet]{ParamSet}.}
+(see method \code{learner_names()}).
+Each element must be a \link[paradox:ParamSet]{ParamSet} object.}
 
 \item{\code{tune_settings}}{(named \code{list()}) \cr
-A named \code{list()} with arguments passed to the hyperparameter-tuning with
-\href{https://mlr3tuning.mlr-org.com/}{mlr3tuning} to set up
-\link[mlr3tuning:TuningInstanceSingleCrit]{TuningInstance} objects.
-\code{tune_settings} has entries
+A named \code{list()} of settings controlling the hyperparameter tuning process.
+Each entry is passed to the corresponding components from
+\href{https://mlr3tuning.mlr-org.com/}{mlr3tuning}:
 \itemize{
-\item \code{terminator} (\link[bbotk:Terminator]{Terminator}) \cr
-A \link[bbotk:Terminator]{Terminator} object. Specification of \code{terminator}
-is required to perform tuning.
-\item \code{algorithm} (\link[mlr3tuning:Tuner]{Tuner} or \code{character(1)}) \cr
-A \link[mlr3tuning:Tuner]{Tuner} object (recommended) or key passed to the
-respective dictionary to specify the tuning algorithm used in
-\link[mlr3tuning:tnr]{tnr()}. \code{algorithm} is passed as an argument to
-\link[mlr3tuning:tnr]{tnr()}. If \code{algorithm} is not specified by the users,
-default is set to \code{"grid_search"}. If set to \code{"grid_search"}, then
-additional argument \code{"resolution"} is required.
-\item \code{rsmp_tune} (\link[mlr3:Resampling]{Resampling} or \code{character(1)})\cr
-A \link[mlr3:Resampling]{Resampling} object (recommended) or option passed
-to \link[mlr3:mlr_sugar]{rsmp()} to initialize a
-\link[mlr3:Resampling]{Resampling} for parameter tuning in \code{mlr3}.
-If not specified by the user, default is set to \code{"cv"}
-(cross-validation).
-\item \code{n_folds_tune} (\code{integer(1)}, optional) \cr
-If \code{rsmp_tune = "cv"}, number of folds used for cross-validation.
-If not specified by the user, default is set to \code{5}.
-\item \code{measure} (\code{NULL}, named \code{list()}, optional) \cr
-Named list containing the measures used for parameter tuning. Entries in
-list must either be \link[mlr3:Measure]{Measure} objects or keys to be
-passed to passed to \link[mlr3:mlr_sugar]{msr()}. The names of the entries must
-match the learner names (see method \code{learner_names()}). If set to \code{NULL},
-default measures are used, i.e., \code{"regr.mse"} for continuous outcome
-variables and \code{"classif.ce"} for binary outcomes.
-\item \code{resolution} (\code{character(1)}) \cr The key passed to the respective
-dictionary to specify  the tuning algorithm used in
-\link[mlr3tuning:tnr]{tnr()}. \code{resolution} is passed as an argument to
-\link[mlr3tuning:tnr]{tnr()}.
+\item \code{terminator} (\verb{[bbotk::Terminator]}) \cr
+A \link[bbotk:Terminator]{Terminator} object specifying when the tuning
+process should stop (e.g., \code{trm("evals", n_evals = 20)}).
+\item \code{tuner} — a \link[mlr3tuning:Tuner]{Tuner} object created with
+\link[mlr3tuning:tnr]{tnr()}, which defines the optimization algorithm.
+(e.g., \code{tnr("grid_search")} or \code{tnr("random_search")}).
+If set to \code{"grid_search"}, then additional argument \code{"resolution"} is required.
+\item \code{rsmp_tune} — a \link[mlr3:Resampling]{Resampling} object or a key passed to
+\link[mlr3:mlr_sugar]{rsmp()}.
+Defines the resampling strategy used during tuning (default: \code{"cv"}).
+\item \code{n_folds_tune} — an integer scalar (optional).
+Number of folds used if \code{rsmp_tune = "cv"}. Default is \code{5}.
+\item \code{measure} — a named \code{list()} (optional).
+Contains the performance measures used for tuning.
+Each element must be either a \link[mlr3:Measure]{Measure} object or a key to
+\link[mlr3:mlr_sugar]{msr()}.
+Names must match the learner names (see \code{learner_names()}).
+If omitted, default measures are used (\code{"regr.rmse"} for regression and
+\code{"classif.ce"} for classification).
 }}
 
 \item{\code{tune_on_folds}}{(\code{logical(1)}) \cr
-Indicates whether the tuning should be done fold-specific or globally.
-Default is \code{FALSE}.}
+Indicates whether the tuning should be performed separately for each
+cross-fitting fold (\code{TRUE}) or globally across all folds (\code{FALSE}, default).}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 self
 }
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{tune_settings = list(
+  n_folds_tune = 5,
+  rsmp_tune = mlr3::rsmp("cv", folds = 5),
+  terminator = mlr3tuning::trm("evals", n_evals = 20),
+  tuner = mlr3tuning::tnr("grid_search", resolution = 10))
+
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-xtdml-summary"></a>}}

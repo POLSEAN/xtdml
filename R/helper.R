@@ -136,7 +136,7 @@ dml_cv_predict = function(learner, X_cols, y_col,
   } else {
     return(list(
       "preds" = preds,
-      "targets" = targets, #ap
+      "targets" = targets,
       "models" = models))
   }
 }
@@ -157,7 +157,7 @@ dml_tune = function(learner, X_cols, y_col, data_tune_list,
 
   ml_learner = initiate_learner(learner, task_type, params = learner$param_set$values)
   tuning_instance = lapply(task_tune, function(x) {
-    TuningInstanceSingleCrit$new(
+    mlr3tuning::TuningInstanceSingleCrit$new(
       task = x,
       learner = ml_learner,
       resampling = tune_settings$rsmp_tune,
@@ -165,16 +165,14 @@ dml_tune = function(learner, X_cols, y_col, data_tune_list,
       search_space = param_set,
       terminator = tune_settings$terminator)
   })
-  tuning_result = lapply(
-    tuning_instance,
-    function(x) tune_instance(tune_settings$tuner, x))
-  params = vapply(
-    tuning_result,
-    function(x) x$tuning_result$learner_param_vals, list(1L))
-
-  return(list(
-    "tuning_result" = tuning_result,
-    "params" = params))
+  # NEW `bbotk` (v1.6)
+  tuning_result = lapply(tuning_instance, function(inst) {
+    tune_settings$tuner$optimize(inst)
+    inst                              # return the tuned instance
+  })
+  params = lapply(tuning_result, function(inst) inst$result_learner_param_vals)
+  list(tuning_result = tuning_result,
+       params        = params)
 }
 
 extract_prediction = function(obj_resampling, task_type, n_obs,
@@ -245,14 +243,6 @@ extract_models = function(obj_resampling) {
   }
   return(models)
 }
-
-# # Define the rmse function
-# RMSE_ = function(y_pred, y_true) {
-#   # Identify non-missing values
-#   subset = !is.na(y_true)
-#   rmse = RMSE(y_pred[subset], y_true[subset])
-#   return(rmse)
-# }
 
 initiate_learner = function(learner, task_type, params,
                             return_train_preds = FALSE) {
@@ -433,7 +423,6 @@ check_smpl_split = function(smpl, n_obs, check_intersect = FALSE) {
 
 # remove NA from summation within outer()
 sum_na <- function(x) if(all(is.na(x))) NA else sum(x, na.rm = TRUE)
-
 
 ## Polynomial expansion (for Lasso with extensive dictionary)
 polyexp = function(df){
