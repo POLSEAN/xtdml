@@ -356,10 +356,8 @@ Computes predicted outcomes for specified values of the treatment variable.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{d}}{(\code{numeric()}) \cr
-Value of the treatment variable.
-It can be can be: a single value applied to all observations a vector of
-length equal to the number of observations specifying unit-specific treatment
-values, or a vector of multiple treatment levels.}
+Counterfactual treatment value. It can be can be a single value or a vector
+of multiple treatment levels.}
 }
 \if{html}{\out{</div>}}
 }

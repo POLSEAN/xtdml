@@ -770,118 +770,119 @@ xtdml = R6Class("xtdml",
     #' @return Invisibly returns `NULL`.
     plot = function(i_rep = 1L, i_treat = 1L, ask = interactive(), title = NULL, ...) {
 
-      if (is.null(self$predictions) || is.null(self$targets)) {
-        stop("Run fit(store_predictions = TRUE) before calling plot().")
-      }
-
-      nuis_map = switch(
-        self$score,
-        "orth-PO" = c(l = "ml_l", m = "ml_m"),
-        "orth-IV" = c(g = "ml_g", m = "ml_m"),
-        stop("Plot only implemented for scores 'orth-PO' or 'orth-IV'.")
-      )
-
-      rmse_txt = if (is.finite(self$model_rmse[i_treat])) {
-        format(round(self$model_rmse[i_treat], 4), nsmall = 4)
-      } else {
-        "NA"
-      }
-
-      #dots = list(...)
-
-      old_par = graphics::par(no.readonly = TRUE)
-      old_ask = grDevices::devAskNewPage()
-      on.exit({
-        grDevices::devAskNewPage(old_ask)
-        graphics::par(old_par)
-      }, add = TRUE)
-
-      grDevices::devAskNewPage(ask)
-
-      for (lab in names(nuis_map)) {
-
-        nm = nuis_map[[lab]]
-
-        fitted_vals = self$predictions[[nm]][, i_rep, i_treat]
-        target_vals = self$targets[[nm]][, i_rep, i_treat]
-
-        keep = is.finite(fitted_vals) & is.finite(target_vals)
-
-        fitted_vals = fitted_vals[keep]
-        target_vals = target_vals[keep]
-
-        residuals = target_vals - fitted_vals
-
-        old_par = graphics::par(no.readonly = TRUE)
-        on.exit(graphics::par(old_par), add = TRUE)
-
-        graphics::par(
-          mfrow = c(2,2),
-          mar = c(4,4,2,1),
-          oma = c(0,0,3,0)
-        )
-
-        ## Residuals vs fitted
-        graphics::plot(
-          fitted_vals,
-          residuals,
-          xlab = paste0("Fitted (", lab, ")"),
-          ylab = paste0("Residuals (", lab, ")"),
-          main = paste0("Residuals vs fitted (", lab, ")"),
-          pch = 20,
-          ...
-        )
-        graphics::abline(h = 0, lty = 2)
-
-        ## Residuals vs target
-        graphics::plot(
-          target_vals,
-          residuals,
-          xlab = paste0("Target (", lab, ")"),
-          ylab = paste0("Residuals (", lab, ")"),
-          main = paste0("Residuals vs target (", lab, ")"),
-          pch = 20,
-          ...
-        )
-        graphics::abline(h = 0, lty = 2)
-
-        ## Fitted vs target
-        graphics::plot(
-          fitted_vals,
-          target_vals,
-          xlab = paste0("Fitted (", lab, ")"),
-          ylab = paste0("Target (", lab, ")"),
-          main = paste0("Fitted vs target (", lab, ")"),
-          pch = 20,
-          ...
-        )
-        graphics::abline(0,1,lty=2)
-
-        ## QQ plot
-        stats::qqnorm(
-          residuals,
-          main = paste0("QQ plot (", lab, ")"),
-          pch = 20,
-          ...
-        )
-        stats::qqline(residuals, lty = 2)
-
-        title_txt = if (is.null(title)) {
-          paste0("Diagnostics for nuisance ", lab, " | Score: ", self$score,
-                 " | Model RMSE = ", rmse_txt)
-        } else {
-          paste0(title)
+        if (all(is.na(self$coef_theta))) {
+          stop("Model must be fitted before calling plot().")
+        }
+        if (is.null(self$predictions) || is.null(self$targets)) {
+          stop("Run fit(store_predictions = TRUE) before calling plot().")
         }
 
-        graphics::mtext(
-          title_txt,
-          outer = TRUE,
-          line = 1,
-          cex = 1.2
+        nuis_map = switch(
+          self$score,
+          "orth-PO" = c(l = "ml_l", m = "ml_m"),
+          "orth-IV" = c(g = "ml_g", m = "ml_m"),
+          stop("Plot only implemented for scores 'orth-PO' or 'orth-IV'.")
         )
-      }
-      invisible(NULL)
-    },
+
+        rmse_txt = if (is.finite(self$model_rmse[i_treat])) {
+          format(round(self$model_rmse[i_treat], 4), nsmall = 4)
+        } else {
+          "NA"
+        }
+
+        old_par = graphics::par(no.readonly = TRUE)
+        old_ask = grDevices::devAskNewPage()
+        on.exit({
+          grDevices::devAskNewPage(old_ask)
+          graphics::par(old_par)
+        }, add = TRUE)
+
+        grDevices::devAskNewPage(ask)
+
+        for (lab in names(nuis_map)) {
+
+          nm = nuis_map[[lab]]
+
+          fitted_vals = self$predictions[[nm]][, i_rep, i_treat]
+          target_vals = self$targets[[nm]][, i_rep, i_treat]
+
+          keep = is.finite(fitted_vals) & is.finite(target_vals)
+
+          fitted_vals = fitted_vals[keep]
+          target_vals = target_vals[keep]
+
+          residuals = target_vals - fitted_vals
+
+          old_par = graphics::par(no.readonly = TRUE)
+          on.exit(graphics::par(old_par), add = TRUE)
+
+          graphics::par(
+            mfrow = c(2,2),
+            mar = c(4,4,2,1),
+            oma = c(0,0,3,0)
+          )
+
+          ## Residuals vs fitted
+          graphics::plot(
+            fitted_vals,
+            residuals,
+            xlab = paste0("Fitted (", lab, ")"),
+            ylab = paste0("Residuals (", lab, ")"),
+            main = paste0("Residuals vs fitted (", lab, ")"),
+            pch = 20,
+            ...
+          )
+          graphics::abline(h = 0, lty = 2)
+
+          ## Residuals vs target
+          graphics::plot(
+            target_vals,
+            residuals,
+            xlab = paste0("Target (", lab, ")"),
+            ylab = paste0("Residuals (", lab, ")"),
+            main = paste0("Residuals vs target (", lab, ")"),
+            pch = 20,
+            ...
+          )
+          graphics::abline(h = 0, lty = 2)
+
+          ## Fitted vs target
+          graphics::plot(
+            fitted_vals,
+            target_vals,
+            xlab = paste0("Fitted (", lab, ")"),
+            ylab = paste0("Target (", lab, ")"),
+            main = paste0("Fitted vs target (", lab, ")"),
+            pch = 20,
+            ...
+          )
+          graphics::abline(0,1,lty=2)
+
+          ## QQ plot
+          stats::qqnorm(
+            residuals,
+            main = paste0("QQ plot (", lab, ")"),
+            pch = 20,
+            ...
+          )
+          stats::qqline(residuals, lty = 2)
+
+          title_txt = if (is.null(title)) {
+            paste0("Diagnostics for nuisance ", lab, " | Score: ", self$score,
+                   " | Model RMSE = ", rmse_txt)
+          } else {
+            paste0(title)
+          }
+
+          graphics::mtext(
+            title_txt,
+            outer = TRUE,
+            line = 1,
+            cex = 1.2
+          )
+        }
+        invisible(NULL)
+     },
 
     #' @description
     #' Computes predicted outcomes for specified values of the treatment variable.
