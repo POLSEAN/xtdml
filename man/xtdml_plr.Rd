@@ -2,7 +2,7 @@
 % Please edit documentation in R/xtdml_plr.R
 \name{xtdml_plr}
 \alias{xtdml_plr}
-\title{Routine to estimate partially linear panel regression models with fixed effects within double machine learning.}
+\title{DML Method for Partially Linear Panel Models}
 \format{
 \link[R6:R6Class]{R6::R6Class} object inheriting from \link{xtdml}.
 }
@@ -12,14 +12,10 @@ Routine to estimate partially linear panel regression models with fixed effects 
 \details{
 Consider partially linear panel regression (PLR) model of form
 
-\eqn{ Y_{it} = \theta_0 D_{it} + g_0(x_{it}) + \alpha_i + U_{it} (1)}
-
-\eqn{ D_{it} = m_0(x_{it}) + \gamma_i + V_{it}  (2)}
-
-where (1) is the outcome equation and (2) is the treatment equation.
+\eqn{ Y_{it} = \theta_0 D_{it} + g_0(x_{it}) + \alpha_i + U_{it}}
+\eqn{ D_{it} = m_0(x_{it}) + \gamma_i + V_{it}}.
 }
 \examples{
-
 # An illustrative example using a regression tree (`rpart`)
 library(mlr3)
 library(rpart)
@@ -58,7 +54,7 @@ tune_settings = list(n_folds_tune = 3,
                    tuner = tnr("grid_search", resolution = 10))
 
 obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
- obj_xtdml$fit()
+obj_xtdml$fit()
 
 }
 \seealso{
@@ -83,9 +79,12 @@ Other xtdml:
 <ul>
 <li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="confint"><a href='../../xtdml/html/xtdml.html#method-xtdml-confint'><code>xtdml::xtdml$confint()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="fit"><a href='../../xtdml/html/xtdml.html#method-xtdml-fit'><code>xtdml::xtdml$fit()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="get_panel_info"><a href='../../xtdml/html/xtdml.html#method-xtdml-get_panel_info'><code>xtdml::xtdml$get_panel_info()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="get_params"><a href='../../xtdml/html/xtdml.html#method-xtdml-get_params'><code>xtdml::xtdml$get_params()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="learner_names"><a href='../../xtdml/html/xtdml.html#method-xtdml-learner_names'><code>xtdml::xtdml$learner_names()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="params_names"><a href='../../xtdml/html/xtdml.html#method-xtdml-params_names'><code>xtdml::xtdml$params_names()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="plot"><a href='../../xtdml/html/xtdml.html#method-xtdml-plot'><code>xtdml::xtdml$plot()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="predict"><a href='../../xtdml/html/xtdml.html#method-xtdml-predict'><code>xtdml::xtdml$predict()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="print"><a href='../../xtdml/html/xtdml.html#method-xtdml-print'><code>xtdml::xtdml$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="split_samples"><a href='../../xtdml/html/xtdml.html#method-xtdml-split_samples'><code>xtdml::xtdml$split_samples()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="xtdml" data-topic="xtdml" data-id="summary"><a href='../../xtdml/html/xtdml.html#method-xtdml-summary'><code>xtdml::xtdml$summary()</code></a></span></li>
@@ -193,7 +192,7 @@ Indicates whether cross-fitting should be applied. Default is \code{TRUE}.}
 \if{html}{\out{<a id="method-xtdml_plr-set_ml_nuisance_params"></a>}}
 \if{latex}{\out{\hypertarget{method-xtdml_plr-set_ml_nuisance_params}{}}}
 \subsection{Method \code{set_ml_nuisance_params()}}{
-Set hyperparameters for the nuisance models of DML models with FE.
+Sets hyperparameters for the nuisance models.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{xtdml_plr$set_ml_nuisance_params(
   learner = NULL,
@@ -235,7 +234,7 @@ self
 \if{html}{\out{<a id="method-xtdml_plr-tune"></a>}}
 \if{latex}{\out{\hypertarget{method-xtdml_plr-tune}{}}}
 \subsection{Method \code{tune()}}{
-Hyperparameter-tuning within double machine learning.
+Conducts hyperparameter-tuning.
 
 The hyperparameter-tuning is performed using the tuning methods provided
 in the \href{https://mlr3tuning.mlr-org.com/}{mlr3tuning} package. For more
@@ -263,7 +262,8 @@ class \link[paradox:ParamSet]{ParamSet}.}
 \item{\code{tune_settings}}{(named \code{list()}) \cr
 A named \code{list()} with arguments passed to the hyperparameter-tuning with
 \href{https://mlr3tuning.mlr-org.com/}{mlr3tuning} to set up
-\link[mlr3tuning:TuningInstanceSingleCrit]{TuningInstance} objects.
+a tuning instance using \code{mlr3tuning::TuningInstanceBatchSingleCrit$new()} (see the mlr3tuning package).
+
 \code{tune_settings} has entries
 \itemize{
 \item \code{terminator} (\link[bbotk:Terminator]{Terminator}) \cr

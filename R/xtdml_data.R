@@ -1,14 +1,10 @@
-#' @title Set up for data for panel data approaches and up two cluster variables
+#' @title Data-backed DML Environment
 #'
 #' @description
-#' Double machine learning (DML) data-backend for data with cluster variables.
+#' Data-backed environment for Double machine learning (DML) that cannot be initialized.
 #' `xtdml_data` sets up the data environment for panel data analysis with transformed variables.
-#'
-#' `xtdml_data` objects can be initialized from a
-#' [data.table][data.table::data.table()]. The following functions can be used to create a new
-#' instance of `xtdml_data`.
-#' * `xtdml_data$new()` for initialization from a `data.table`.
-#' * [xtdml_data_from_data_frame()] for initialization from a `data.frame`.
+#' The [xtdml_data_from_data_frame()] function can be used to create a new
+#' instance of `xtdml_data` from a `data.frame`.
 #' @export
 xtdml_data = R6Class("xtdml_data",
                      active = list(
@@ -340,7 +336,19 @@ xtdml_data = R6Class("xtdml_data",
                        },
 
                        #' @description
-                       #' Setter function for `data_model`. The function implements the causal model
+                       #' Plotting method, which is not implemented for `xtdml` objects.
+                       #'
+                       #' Attempting to call it returns an informative message.
+                       #' Use the `print()` method to view `xtdml_data` objects.
+                       plot = function() {
+                         message("Plotting method is not supported for objects of class `xtdml`. ",
+                                 "Please use the print()` method to view information about the data.")
+                       },
+
+                       #' @description
+                       #' Setter function for `data_model`.
+                       #'
+                       #' The function implements the causal model
                        #' as specified by the user via `y_col`, `d_cols`, `x_cols`, `panel_id`, `time_id` and
                        #' `cluster_cols` and assigns the role for the treatment variables in the
                        #' multiple-treatment case.
@@ -468,11 +476,11 @@ xtdml_data = R6Class("xtdml_data",
                      )
 )
 
-#' @title Wrapper for Double machine learning data-backend initialization from
-#' data.frame.
+#' @title Initalization of Abstract Class `xtdml_data`
+#' @name xtdml_data_from_data_frame
 #'
 #' @description
-#' Initalization of DoubleMLData from `data.frame`.
+#' Wrapper for data-backed initialization from data frame.
 #'
 #' @param df (`data.frame()`)\cr
 #' Data object.
@@ -511,7 +519,6 @@ xtdml_data = R6Class("xtdml_data",
 #' @return Creates a new instance of class `xtdml_data`.
 #'
 #' @examples
-#'
 #' # Generate simulated panel dataset from `xtdml`
 #' data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
 #'
@@ -525,12 +532,9 @@ xtdml_data = R6Class("xtdml_data",
 #'                 cluster_cols = "id",
 #'                 approach = "fd-exact",
 #'                 transformX = "no")
-#'
 #' obj_xtdml_data$print()
 #'
-#'
 #' @export
-#'
 xtdml_data_from_data_frame = function(df,
                                       x_cols = NULL, y_col = NULL, d_cols = NULL,
                                       panel_id = NULL, time_id = NULL, cluster_cols = NULL,
@@ -570,9 +574,10 @@ xtdml_data_from_data_frame = function(df,
     # 1. Define set of X. Add L.x for FD, and (xbar,dbar) for CRE
     if(approach=="cre"){
       df = df %>%
-        group_by(across(all_of(panel_id))) %>%
-        mutate(across(c(x_cols, d_cols), ~  mean(.x), .names = "m_{col}")) %>%
-        ungroup()
+        dplyr::arrange(dplyr::across(all_of(c(panel_id, time_id)))) %>%
+        dplyr::group_by(dplyr::across(all_of(panel_id))) %>%
+        dplyr::mutate(dplyr::across(c(x_cols, d_cols), ~  mean(.x), .names = "m_{col}")) %>%
+        dplyr::ungroup()
 
       Lx_cols = paste0("m_", x_cols)
       x_cols_plus = c(x_cols, Lx_cols)
@@ -580,12 +585,17 @@ xtdml_data_from_data_frame = function(df,
 
     } else if(approach=="fd-exact"){
       df = df %>%
-        group_by(across(all_of(panel_id))) %>%
-        mutate(across(x_cols, ~  lag(.x), .names = "L.{col}"))   %>%
-        mutate(across(c(d_cols, y_col), ~ c(NA, diff(.x))))  %>%
-        ungroup()
-      complete_rows = complete.cases(df)
-      df = df[complete_rows, ]
+        dplyr::arrange(dplyr::across(all_of(c(panel_id, time_id)))) %>%
+        dplyr::group_by(dplyr::across(all_of(panel_id))) %>%
+        dplyr::mutate(dplyr::across(x_cols, ~  lag(.x), .names = "L.{col}"))   %>%
+        dplyr::mutate(dplyr::across(c(d_cols, y_col), ~ c(NA, diff(.x))))  %>%
+        dplyr::mutate(first_obs = dplyr::row_number() == 1L) %>%
+        dplyr::ungroup()
+      #complete_rows = complete.cases(df)
+      #df = df[complete_rows, ]
+
+      # Identify the first row per group after sorting
+      df <- df %>% dplyr::filter(!.data$first_obs) %>% dplyr::select(-.data$first_obs)
 
       Lx_cols = paste0("L.", x_cols)
       x_cols_plus = c(x_cols, Lx_cols)
@@ -666,16 +676,16 @@ xtdml_data_from_data_frame = function(df,
       #   stop("The `wg-approx` approach currently supports only one cluster column (e.g., individual ID).")
       # }
 
-      df_no_idx = df2 %>% select(all_of(c(x_cols_plus, y_col, d_cols)))
+      df_no_idx = df2 %>% dplyr::select(all_of(c(x_cols_plus, y_col, d_cols)))
 
       df_gm = df_no_idx %>%
-        summarise(across(everything(), mean, na.rm = TRUE))
+        summarise(dplyr::across(everything(), mean, na.rm = TRUE))
       gm_list = as.list(df_gm)
 
       df_mi = df2 %>%
-        group_by(across(all_of(panel_id))) %>%
-        mutate(across(all_of(c(x_cols_plus, y_col, d_cols)), ~ mean(.x, na.rm = TRUE), .names = "m.{col}")) %>%
-        ungroup()
+        dplyr::group_by(dplyr::across(all_of(panel_id))) %>%
+        dplyr::mutate(dplyr::across(all_of(c(x_cols_plus, y_col, d_cols)), ~ mean(.x, na.rm = TRUE), .names = "m.{col}")) %>%
+        dplyr::ungroup()
 
       var_names = c(x_cols_plus, y_col, d_cols)
       df_dm = df_no_idx

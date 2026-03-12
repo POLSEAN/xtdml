@@ -1,8 +1,8 @@
 Package: xtdml
 Type: Package
 Title: Double Machine Learning for Static Panel Models with Fixed Effects
-Version: 0.1.9
-Date: 2025-11-12
+Version: 0.1.12
+Date: 2026-01-05
 Authors@R:
     person("Annalivia", "Polselli",  role = c("aut", "cre"),
     email = "apolselli.econ@gmail.com", 
@@ -12,13 +12,13 @@ Description: The 'xtdml' package implements partially linear panel regression (P
 License: GPL-2 | GPL-3
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
-Imports: R6 (>= 2.4.1), data.table (>= 1.12.8),  mlr3 (>= 0.19.0), mlr3tuning (>= 0.20.0), 
-        mlr3learners (>= 0.3.0), mlr3misc (>= 0.19.0),
+Imports: R6 (>= 2.4.1), data.table (>= 1.12.8),  mlr3 (>= 1.3.0), mlr3tuning (>= 1.5.0), 
+        mlr3learners (>= 0.13.0), mlr3misc (>= 0.19.0),
         mvtnorm, utils, clusterGeneration, readstata13, magrittr, dplyr, stats, 
-        MLmetrics, checkmate
+        MLmetrics, checkmate, rlang
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: 
     rpart,
     mlr3pipelines,
-    bbotk (>= 1.6.0)
+    bbotk (>= 1.8.0)

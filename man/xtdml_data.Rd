@@ -2,18 +2,12 @@
 % Please edit documentation in R/xtdml_data.R
 \name{xtdml_data}
 \alias{xtdml_data}
-\title{Set up for data for panel data approaches and up two cluster variables}
+\title{Data-backed DML Environment}
 \description{
-Double machine learning (DML) data-backend for data with cluster variables.
+Data-backed environment for Double machine learning (DML) that cannot be initialized.
 \code{xtdml_data} sets up the data environment for panel data analysis with transformed variables.
-
-\code{xtdml_data} objects can be initialized from a
-\link[data.table:data.table]{data.table}. The following functions can be used to create a new
-instance of \code{xtdml_data}.
-\itemize{
-\item \code{xtdml_data$new()} for initialization from a \code{data.table}.
-\item \code{\link[=xtdml_data_from_data_frame]{xtdml_data_from_data_frame()}} for initialization from a \code{data.frame}.
-}
+The \code{\link[=xtdml_data_from_data_frame]{xtdml_data_from_data_frame()}} function can be used to create a new
+instance of \code{xtdml_data} from a \code{data.frame}.
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -80,6 +74,7 @@ combinations of two and three variables; this is recommended for Lasso. Default 
 \itemize{
 \item \href{#method-xtdml_data-new}{\code{xtdml_data$new()}}
 \item \href{#method-xtdml_data-print}{\code{xtdml_data$print()}}
+\item \href{#method-xtdml_data-plot}{\code{xtdml_data$plot()}}
 \item \href{#method-xtdml_data-set_data_model}{\code{xtdml_data$set_data_model()}}
 \item \href{#method-xtdml_data-clone}{\code{xtdml_data$clone()}}
 }
@@ -157,10 +152,25 @@ Print \code{xtdml_data} objects.
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-xtdml_data-plot"></a>}}
+\if{latex}{\out{\hypertarget{method-xtdml_data-plot}{}}}
+\subsection{Method \code{plot()}}{
+Plotting method, which is not implemented for \code{xtdml} objects.
+
+Attempting to call it returns an informative message.
+Use the \code{print()} method to view \code{xtdml_data} objects.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{xtdml_data$plot()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-xtdml_data-set_data_model"></a>}}
 \if{latex}{\out{\hypertarget{method-xtdml_data-set_data_model}{}}}
 \subsection{Method \code{set_data_model()}}{
-Setter function for \code{data_model}. The function implements the causal model
+Setter function for \code{data_model}.
+
+The function implements the causal model
 as specified by the user via \code{y_col}, \code{d_cols}, \code{x_cols}, \code{panel_id}, \code{time_id} and
 \code{cluster_cols} and assigns the role for the treatment variables in the
 multiple-treatment case.

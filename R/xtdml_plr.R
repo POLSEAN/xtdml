@@ -1,4 +1,5 @@
-#' @title Routine to estimate partially linear panel regression models with fixed effects within double machine learning.
+#' @title DML Method for Partially Linear Panel Models
+#' @name xtdml_plr
 #'
 #' @description
 #' Routine to estimate partially linear panel regression models with fixed effects within double machine learning.
@@ -9,16 +10,12 @@
 #' @details
 #' Consider partially linear panel regression (PLR) model of form
 #'
-#' \eqn{ Y_{it} = \theta_0 D_{it} + g_0(x_{it}) + \alpha_i + U_{it} (1)}
-#'
-#' \eqn{ D_{it} = m_0(x_{it}) + \gamma_i + V_{it}  (2)}
-#'
-#' where (1) is the outcome equation and (2) is the treatment equation.
+#' \eqn{ Y_{it} = \theta_0 D_{it} + g_0(x_{it}) + \alpha_i + U_{it}}
+#' \eqn{ D_{it} = m_0(x_{it}) + \gamma_i + V_{it}}.
 #'
 #' @usage NULL
 #'
 #' @examples
-#'
 #' # An illustrative example using a regression tree (`rpart`)
 #' library(mlr3)
 #' library(rpart)
@@ -57,7 +54,7 @@
 #'                    tuner = tnr("grid_search", resolution = 10))
 #'
 #' obj_xtdml$tune(param_set = param_grid, tune_settings = tune_settings)
-#'  obj_xtdml$fit()
+#' obj_xtdml$fit()
 #'
 #' @export
 xtdml_plr <- R6Class("xtdml_plr",
@@ -202,7 +199,7 @@ xtdml_plr <- R6Class("xtdml_plr",
                          private$initialize_ml_nuisance_params()
                        },
                        #' @description
-                       #' Set hyperparameters for the nuisance models of DML models with FE.
+                       #' Sets hyperparameters for the nuisance models.
                        #'
                        #' @param learner (`character(1)`) \cr
                        #' The nuisance model/learner (see method `params_names`).
@@ -242,7 +239,7 @@ xtdml_plr <- R6Class("xtdml_plr",
                        },
 
                        #' @description
-                       #' Hyperparameter-tuning within double machine learning.
+                       #' Conducts hyperparameter-tuning.
                        #'
                        #' The hyperparameter-tuning is performed using the tuning methods provided
                        #' in the [mlr3tuning](https://mlr3tuning.mlr-org.com/) package. For more
@@ -258,7 +255,8 @@ xtdml_plr <- R6Class("xtdml_plr",
                        #' @param tune_settings (named `list()`) \cr
                        #' A named `list()` with arguments passed to the hyperparameter-tuning with
                        #' [mlr3tuning](https://mlr3tuning.mlr-org.com/) to set up
-                       #' [TuningInstance][mlr3tuning::TuningInstanceSingleCrit] objects.
+                       #' a tuning instance using `mlr3tuning::TuningInstanceBatchSingleCrit$new()` (see the mlr3tuning package).
+                       #'
                        #' `tune_settings` has entries
                        #' * `terminator` ([Terminator][bbotk::Terminator]) \cr
                        #' A [Terminator][bbotk::Terminator] object. Specification of `terminator`

@@ -157,7 +157,7 @@ dml_tune = function(learner, X_cols, y_col, data_tune_list,
 
   ml_learner = initiate_learner(learner, task_type, params = learner$param_set$values)
   tuning_instance = lapply(task_tune, function(x) {
-    mlr3tuning::TuningInstanceSingleCrit$new(
+      mlr3tuning::TuningInstanceBatchSingleCrit$new(  #TuningInstanceSingleCrit deprecated
       task = x,
       learner = ml_learner,
       resampling = tune_settings$rsmp_tune,

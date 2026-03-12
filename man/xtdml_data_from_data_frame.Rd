@@ -2,8 +2,7 @@
 % Please edit documentation in R/xtdml_data.R
 \name{xtdml_data_from_data_frame}
 \alias{xtdml_data_from_data_frame}
-\title{Wrapper for Double machine learning data-backend initialization from
-data.frame.}
+\title{Initalization of Abstract Class \code{xtdml_data}}
 \usage{
 xtdml_data_from_data_frame(
   df,
@@ -56,10 +55,9 @@ Default is \code{"no"}.}
 Creates a new instance of class \code{xtdml_data}.
 }
 \description{
-Initalization of DoubleMLData from \code{data.frame}.
+Wrapper for data-backed initialization from data frame.
 }
 \examples{
-
 # Generate simulated panel dataset from `xtdml`
 data = make_plpr_data(n_obs = 500, t_per = 10, dim_x = 30, theta = 0.5, rho=0.8)
 
@@ -73,8 +71,6 @@ obj_xtdml_data = xtdml_data_from_data_frame(data,
                 cluster_cols = "id",
                 approach = "fd-exact",
                 transformX = "no")
-
 obj_xtdml_data$print()
-
 
 }

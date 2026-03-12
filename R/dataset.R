@@ -1,4 +1,5 @@
-#' @title Generates data from a partially linear panel regression (PLPR) model
+#' @title Simulated Data Frame
+#' @name make_plpr_data
 #'
 #' @description
 #'  Generates data from a partially linear regression model for panel data with fixed effects
@@ -7,7 +8,6 @@
 #'  The data generating process is defined as
 #'
 #' \eqn{Y_{it} = \theta D_{it} + g_0(X_{it}) + \alpha_i + U_{it},}
-#'
 #' \eqn{D_{it} = m_0(X_{it}) + \gamma_i + V_{it},}
 #'
 #' where \eqn{U_{it} \sim \mathcal{N}(0,1)}, \eqn{V_{it}  \sim \mathcal{N}(0,1)},
@@ -20,7 +20,6 @@
 #' The nuisance functions are given by
 #'
 #' \eqn{m_0(X_{it}) = a_1 [X_{it,1} \times 1(X_{it,1}>0)] + a_2 [X_{it,1} \times X_{it,3}],}
-#'
 #' \eqn{g_0(X_{it}) = b_1 [X_{it,1} \times X_{it,3}] + b_2 [X_{it,3} \times 1(X_{it,3}>0)],}
 #'
 #' with \eqn{a_1=b_2=0.25} and \eqn{a_2=b_1=0.5}.
